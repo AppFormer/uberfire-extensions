@@ -48,8 +48,6 @@ import org.uberfire.client.annotations.WorkbenchEditor;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
-import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.ext.widgets.common.client.common.popups.DeletePopup;
 import org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants;
 import org.uberfire.lifecycle.IsDirty;
@@ -97,9 +95,6 @@ public class ScreenEditor
 
     @Inject
     private Event<NotificationEvent> notification;
-
-    @Inject
-    private BusyIndicatorView busyIndicatorView;
 
     private PlaceRequest place;
 
@@ -204,9 +199,9 @@ public class ScreenEditor
                             public void callback( final Void response ) {
                                 notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemDeletedSuccessfully(), NotificationEvent.NotificationType.SUCCESS));
                                 placeManager.closePlace(place);
-                                busyIndicatorView.hideBusyIndicator();
+
                             }
-                        }, new HasBusyIndicatorDefaultErrorCallback( busyIndicatorView ) ).delete(plugin);
+                        }).delete(plugin);
 
 
                     }

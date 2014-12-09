@@ -48,8 +48,6 @@ import org.uberfire.client.annotations.WorkbenchEditor;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
-import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.ext.widgets.common.client.common.popups.DeletePopup;
 import org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants;
 import org.uberfire.lifecycle.IsDirty;
@@ -64,7 +62,7 @@ import org.uberfire.workbench.model.menu.Menus;
 import static org.uberfire.ext.plugin.client.code.CodeList.*;
 
 @Dependent
-@WorkbenchEditor(identifier = "Splash PlugIn Editor", supportedTypes = { SplashPluginResourceType.class }, priority = Integer.MAX_VALUE)
+@WorkbenchEditor(identifier = "Splash PlugIn Editor", supportedTypes = {SplashPluginResourceType.class}, priority = Integer.MAX_VALUE)
 public class SplashEditor
         extends Composite
         implements RequiresResize {
@@ -75,7 +73,7 @@ public class SplashEditor
 
     }
 
-    private static ViewBinder uiBinder = GWT.create( ViewBinder.class );
+    private static ViewBinder uiBinder = GWT.create(ViewBinder.class);
 
     @UiField
     FlowPanel htmlPanel;
@@ -98,50 +96,47 @@ public class SplashEditor
     @Inject
     private Event<NotificationEvent> notification;
 
-    @Inject
-    private BusyIndicatorView busyIndicatorView;
-
     private PlaceRequest place;
 
     private Plugin plugin;
 
     @PostConstruct
     public void init() {
-        initWidget( uiBinder.createAndBindUi( this ) );
-        editor.setup( MAIN, DIVIDER, ON_OPEN, ON_CLOSE, ON_STARTUP, ON_SHUTDOWN, DIVIDER, TITLE, BODY_HEIGHT, INTERCEPTION_POINTS );
-        htmlPanel.add( editor );
+        initWidget(uiBinder.createAndBindUi(this));
+        editor.setup(MAIN, DIVIDER, ON_OPEN, ON_CLOSE, ON_STARTUP, ON_SHUTDOWN, DIVIDER, TITLE, BODY_HEIGHT, INTERCEPTION_POINTS);
+        htmlPanel.add(editor);
     }
 
     @OnStartup
-    public void onStartup( final Path path,
-                           final PlaceRequest place ) {
-        pluginServices.call( new RemoteCallback<PluginContent>() {
+    public void onStartup(final Path path,
+                          final PlaceRequest place) {
+        pluginServices.call(new RemoteCallback<PluginContent>() {
             @Override
-            public void callback( final PluginContent response ) {
-                setFramework( response.getFrameworks() );
-                editor.setupContent( response, new ParameterizedCommand<Media>() {
+            public void callback(final PluginContent response) {
+                setFramework(response.getFrameworks());
+                editor.setupContent(response, new ParameterizedCommand<Media>() {
                     @Override
-                    public void execute( final Media media ) {
-                        pluginServices.call().deleteMedia( media );
+                    public void execute(final Media media) {
+                        pluginServices.call().deleteMedia(media);
                     }
-                } );
+                });
             }
-        } ).getPluginContent( path );
-        plugin = new Plugin( place.getParameter( "name", "" ), PluginType.SPLASH, path );
+        }).getPluginContent(path);
+        plugin = new Plugin(place.getParameter("name", ""), PluginType.SPLASH, path);
         this.place = place;
     }
 
-    private void setFramework( final Collection<Framework> frameworks ) {
-        if ( frameworks != null && !frameworks.isEmpty() ) {
+    private void setFramework(final Collection<Framework> frameworks) {
+        if (frameworks != null && !frameworks.isEmpty()) {
             final Framework framework = frameworks.iterator().next();
-            for ( int i = 0; i < this.framework.getItemCount(); i++ ) {
-                if ( this.framework.getItemText( i ).equalsIgnoreCase( framework.toString() ) ) {
-                    this.framework.setSelectedIndex( i );
+            for (int i = 0; i < this.framework.getItemCount(); i++) {
+                if (this.framework.getItemText(i).equalsIgnoreCase(framework.toString())) {
+                    this.framework.setSelectedIndex(i);
                     return;
                 }
             }
         }
-        this.framework.setSelectedIndex( 0 );
+        this.framework.setSelectedIndex(0);
     }
 
     @WorkbenchPartTitle
@@ -151,27 +146,28 @@ public class SplashEditor
 
     @WorkbenchMenu
     public Menus getMenu() {
-        return new PluginsCommonMenu().build( new Command() {
-            @Override
-            public void execute() {
-                final PluginSimpleContent content = new PluginSimpleContent( editor.getContent(), editor.getTemplate(), editor.getCss(), editor.getCodeMap(), getFrameworks(), editor.getContent().getLanguage() );
+        return new PluginsCommonMenu().build(new Command() {
+                                                 @Override
+                                                 public void execute() {
+                                                     final PluginSimpleContent content = new PluginSimpleContent(editor.getContent(), editor.getTemplate(), editor.getCss(), editor.getCodeMap(), getFrameworks(), editor.getContent().getLanguage());
 
-                pluginServices.call().save( content );
-            }
-        }, new Command() {
-            @Override
-            public void execute() {
-                onDelete();
-            }
-        } );
+                                                     pluginServices.call().save(content);
+                                                 }
+                                             }, new Command() {
+                                                 @Override
+                                                 public void execute() {
+                                                     onDelete();
+                                                 }
+                                             }
+        );
     }
 
     private Collection<Framework> getFrameworks() {
-        if ( framework.getValue().equalsIgnoreCase( "(Framework)" ) ) {
+        if (framework.getValue().equalsIgnoreCase("(Framework)")) {
             return Collections.emptyList();
         }
         return new ArrayList<Framework>() {{
-            add( Framework.valueOf( framework.getValue().toUpperCase() ) );
+            add(Framework.valueOf(framework.getValue().toUpperCase()));
         }};
     }
 
@@ -187,24 +183,24 @@ public class SplashEditor
 
     @Override
     public void onResize() {
-        htmlPanel.setHeight( getParent().getParent().getOffsetHeight() + "px" );
+        htmlPanel.setHeight(getParent().getParent().getOffsetHeight() + "px");
         editor.onResize();
     }
+
     protected void onDelete() {
         final DeletePopup popup = new DeletePopup(
 
                 new Command() {
                     @Override
                     public void execute() {
-                        pluginServices.call( new RemoteCallback<Void>() {
+                        pluginServices.call(new RemoteCallback<Void>() {
 
                             @Override
-                            public void callback( final Void response ) {
+                            public void callback(final Void response) {
                                 notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemDeletedSuccessfully(), NotificationEvent.NotificationType.SUCCESS));
                                 placeManager.closePlace(place);
-                                busyIndicatorView.hideBusyIndicator();
                             }
-                        }, new HasBusyIndicatorDefaultErrorCallback( busyIndicatorView ) ).delete(plugin);
+                        }).delete(plugin);
 
 
                     }

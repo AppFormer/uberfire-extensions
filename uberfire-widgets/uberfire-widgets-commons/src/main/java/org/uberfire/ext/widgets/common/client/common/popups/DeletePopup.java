@@ -16,38 +16,38 @@ public class DeletePopup extends FormStylePopup {
 
     final private TextBox checkInCommentTextBox = new TextBox();
 
-    public DeletePopup( final Command command ) {
-        super( CommonConstants.INSTANCE.DeletePopupTitle() );
+    public DeletePopup(final Command command) {
+        super(CommonConstants.INSTANCE.DeletePopupTitle());
 
         checkNotNull("command",
                 command);
 
         //Make sure it appears on top of other popups
-        getElement().getStyle().setZIndex( Integer.MAX_VALUE );
+        getElement().getStyle().setZIndex(Integer.MAX_VALUE);
 
         final GenericModalFooter footer = new GenericModalFooter();
-        footer.addButton( CommonConstants.INSTANCE.DeletePopupDelete(),
+        footer.addButton(CommonConstants.INSTANCE.DeletePopupDelete(),
                 new com.google.gwt.user.client.Command() {
                     @Override
                     public void execute() {
-                        //if ( !Window.confirm("Confirm?") ) {
-                        //    return;
-                        //}
+                        if (!Window.confirm(CommonConstants.INSTANCE.DeleteConfirm())) {
+                            return;
+                        }
                         hide();
-                        command.execute( );
+                        command.execute();
                     }
                 },
                 IconType.REMOVE,
-                ButtonType.PRIMARY );
-        footer.addButton( CommonConstants.INSTANCE.Cancel(),
+                ButtonType.PRIMARY);
+        footer.addButton(CommonConstants.INSTANCE.Cancel(),
                 new com.google.gwt.user.client.Command() {
                     @Override
                     public void execute() {
                         hide();
                     }
                 },
-                ButtonType.DEFAULT );
-        add( footer );
+                ButtonType.DEFAULT);
+        add(footer);
     }
 
 }

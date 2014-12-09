@@ -115,9 +115,6 @@ public class PerspectiveEditor
     @Inject
     private Event<NotificationEvent> notification;
 
-    @Inject
-    private BusyIndicatorView busyIndicatorView;
-
     private PlaceRequest place;
 
     private Plugin plugin;
@@ -273,9 +270,9 @@ public class PerspectiveEditor
                             public void callback( final Void response ) {
                                 notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemDeletedSuccessfully(), NotificationEvent.NotificationType.SUCCESS));
                                 placeManager.closePlace(place);
-                                busyIndicatorView.hideBusyIndicator();
+
                             }
-                        }, new HasBusyIndicatorDefaultErrorCallback( busyIndicatorView ) ).delete(plugin);
+                        } ).delete(plugin);
 
 
                     }
