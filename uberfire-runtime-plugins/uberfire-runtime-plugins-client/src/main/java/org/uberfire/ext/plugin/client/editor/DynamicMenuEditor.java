@@ -65,8 +65,6 @@ import org.uberfire.client.annotations.WorkbenchEditor;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
-import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
@@ -123,9 +121,6 @@ public class DynamicMenuEditor extends Composite implements Editor<DynamicMenuIt
 
     @Inject
     private Event<NotificationEvent> notification;
-
-    @Inject
-    private BusyIndicatorView busyIndicatorView;
 
     private PlaceRequest place;
 
@@ -322,26 +317,19 @@ public class DynamicMenuEditor extends Composite implements Editor<DynamicMenuIt
         return "Dynamic Menu Editor [" + plugin.getName() + "]";
     }
     protected void onDelete() {
-        final DeletePopup popup = new DeletePopup(
+        final DeletePopup popup = new DeletePopup( new Command() {
+            @Override
+            public void execute() {
+                pluginServices.call( new RemoteCallback<Void>() {
 
-                new Command() {
                     @Override
-                    public void execute() {
-                        pluginServices.call( new RemoteCallback<Void>() {
-
-                            @Override
-                            public void callback( final Void response ) {
-                                notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemDeletedSuccessfully(), NotificationEvent.NotificationType.SUCCESS));
-                                placeManager.closePlace(place);
-                                busyIndicatorView.hideBusyIndicator();
-                            }
-                        }, new HasBusyIndicatorDefaultErrorCallback( busyIndicatorView ) ).delete(menuItem);
-
-
+                    public void callback( final Void response ) {
+                        notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemDeletedSuccessfully(), NotificationEvent.NotificationType.SUCCESS));
+                        placeManager.closePlace(place);
                     }
-                }
-        );
-
+                } ).delete(menuItem);
+            }
+        });
         popup.show();
     }
 
