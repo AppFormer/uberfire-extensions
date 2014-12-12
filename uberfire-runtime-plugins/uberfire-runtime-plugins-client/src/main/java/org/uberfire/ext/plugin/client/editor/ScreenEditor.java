@@ -49,8 +49,6 @@ import org.uberfire.ext.plugin.model.PluginContent;
 import org.uberfire.ext.plugin.model.PluginSimpleContent;
 import org.uberfire.ext.plugin.model.PluginType;
 import org.uberfire.ext.plugin.service.PluginServices;
-import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
-import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants;
 import org.uberfire.lifecycle.IsDirty;
 import org.uberfire.lifecycle.OnMayClose;
@@ -97,9 +95,6 @@ public class ScreenEditor
 
     @Inject
     private Event<NotificationEvent> notification;
-
-    @Inject
-    private BusyIndicatorView busyIndicatorView;
 
     private PlaceRequest place;
 
@@ -193,26 +188,19 @@ public class ScreenEditor
     }
 
     protected void onDelete() {
-        final DeletePopup popup = new DeletePopup(
+        final DeletePopup popup = new DeletePopup( new Command() {
+            @Override
+            public void execute() {
+                pluginServices.call( new RemoteCallback<Void>() {
 
-                new Command() {
                     @Override
-                    public void execute() {
-                        pluginServices.call( new RemoteCallback<Void>() {
-
-                            @Override
-                            public void callback( final Void response ) {
-                                notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemDeletedSuccessfully(), NotificationEvent.NotificationType.SUCCESS));
-                                placeManager.closePlace(place);
-                                busyIndicatorView.hideBusyIndicator();
-                            }
-                        }, new HasBusyIndicatorDefaultErrorCallback( busyIndicatorView ) ).delete(plugin);
-
-
+                    public void callback( final Void response ) {
+                        notification.fire( new NotificationEvent( CommonConstants.INSTANCE.ItemDeletedSuccessfully(), NotificationEvent.NotificationType.SUCCESS ) );
+                        placeManager.closePlace( place );
                     }
-                }
-        );
-
+                } ).delete( plugin );
+            }
+        } );
         popup.show();
     }
 
