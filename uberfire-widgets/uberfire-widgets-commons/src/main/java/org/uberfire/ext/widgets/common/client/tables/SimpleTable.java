@@ -19,9 +19,7 @@ package org.uberfire.ext.widgets.common.client.tables;
 import java.util.List;
 import javax.inject.Inject;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.DataGrid;
-import com.github.gwtbootstrap.client.ui.Label;
+import com.github.gwtbootstrap.client.ui.*;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -73,6 +71,9 @@ public class SimpleTable<T>
     public Button columnPickerButton;
 
     @UiField(provided = true)
+    public ListBox filterSelectorListBox;
+
+    @UiField(provided = true)
     public DataGrid<T> dataGrid;
 
     @UiField
@@ -87,6 +88,8 @@ public class SimpleTable<T>
     private String emptyTableCaption;
 
     private ColumnPicker<T> columnPicker;
+
+    private FilterSelectorDropdown<T> filterSelectorDropdown;
 
     private GridPreferencesStore gridPreferencesStore;
 
@@ -146,6 +149,10 @@ public class SimpleTable<T>
 
             }
         } );
+
+        filterSelectorDropdown = new FilterSelectorDropdown<T>( gridPreferencesStore );
+        filterSelectorListBox = new ListBox( );
+        filterSelectorDropdown.createDropdownButton(filterSelectorListBox);
         columnPickerButton = columnPicker.createToggleButton();
 
         initWidget( makeWidget() );
@@ -174,6 +181,7 @@ public class SimpleTable<T>
     }
 
     public void refresh() {
+
         dataGrid.setVisibleRangeAndClearData( dataGrid.getVisibleRange(),
                                               true );
     }
@@ -246,6 +254,7 @@ public class SimpleTable<T>
 
     public void setPreferencesService( Caller<UserDataGridPreferencesService> preferencesService ) {
         this.preferencesService = preferencesService;
+        filterSelectorDropdown.setPreferencesService( preferencesService );
     }
 
     @Override
@@ -417,6 +426,7 @@ public class SimpleTable<T>
         //   if I would like to compare with the current state for changes
         this.gridPreferencesStore = gridPreferences;
         columnPicker.setGridPreferencesStore( gridPreferences );
+        filterSelectorDropdown.setGridPreferencesStore( gridPreferences );
     }
 
     public GridPreferencesStore getGridPreferencesStore() {
@@ -431,6 +441,14 @@ public class SimpleTable<T>
                 }
             } ).saveGridPreferences( gridPreferencesStore );
         }
+    }
+
+    public void addFilter(DataGridFilter<T> datagridFilter) {
+        filterSelectorDropdown.addFilter( datagridFilter );
+    }
+
+    public void refreshFilterDropdown() {
+        filterSelectorDropdown.createDropdownButton(filterSelectorListBox);
     }
 
 }

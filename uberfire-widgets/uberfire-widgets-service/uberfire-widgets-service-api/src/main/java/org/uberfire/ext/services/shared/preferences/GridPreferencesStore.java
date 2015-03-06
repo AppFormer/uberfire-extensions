@@ -25,6 +25,7 @@ public class GridPreferencesStore {
   private GridGlobalPreferences globalPreferences;
   private List<GridColumnPreference> columnPreferences = new ArrayList<GridColumnPreference>();
   private int pageSizePreferences;
+  private String selectedFilterKey;
 
   public GridPreferencesStore() {
   }
@@ -63,5 +64,13 @@ public class GridPreferencesStore {
 
   public void setPageSizePreferences( int pageSizePreferences ) {
     this.pageSizePreferences = pageSizePreferences;
+  }
+
+  public String getSelectedFilterKey() {
+    return selectedFilterKey;
+  }
+
+  public void setSelectedFilterKey( String selectedFilterKey ) {
+    this.selectedFilterKey = selectedFilterKey;
   }
 }

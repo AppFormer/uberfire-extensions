@@ -148,6 +148,7 @@ public class PagedTable<T>
                 if (popupPanelCloseEvent.isAutoClosed()) {
                     button.setActive(false);
                 }
+                pageSizesSelector.setActive( false );
             }
         });
 
@@ -158,7 +159,9 @@ public class PagedTable<T>
                             button.getAbsoluteTop() + button.getOffsetHeight());
                 } else {
                     popup.hide(false);
+                    pageSizesSelector.setActive(false);
                 }
+
             }
         });
         return button;
@@ -180,7 +183,6 @@ public class PagedTable<T>
                     setPageSizeValue( );
                     popup.hide();
                     pageSizesSelector.setActive( false );
-
                 }
             } );
             popupContent.add(rb);
