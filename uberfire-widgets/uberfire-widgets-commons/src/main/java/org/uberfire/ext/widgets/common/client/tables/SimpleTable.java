@@ -91,6 +91,8 @@ public class SimpleTable<T>
 
     private FilterSelectorDropdown<T> filterSelectorDropdown;
 
+    private boolean showFilterSelector = false;
+
     private GridPreferencesStore gridPreferencesStore;
 
     @Inject
@@ -152,7 +154,8 @@ public class SimpleTable<T>
 
         filterSelectorDropdown = new FilterSelectorDropdown<T>( gridPreferencesStore );
         filterSelectorListBox = new ListBox( );
-        filterSelectorDropdown.createDropdownButton(filterSelectorListBox);
+        filterSelectorListBox.setVisible( showFilterSelector );
+
         columnPickerButton = columnPicker.createToggleButton();
 
         initWidget( makeWidget() );
@@ -451,4 +454,12 @@ public class SimpleTable<T>
         filterSelectorDropdown.createDropdownButton(filterSelectorListBox);
     }
 
+    public boolean isShowFilterSelector() {
+        return showFilterSelector;
+    }
+
+    public void setShowFilterSelector( boolean showFilterSelector ) {
+        this.showFilterSelector = showFilterSelector;
+        if(filterSelectorListBox!=null)filterSelectorListBox.setVisible( showFilterSelector );
+    }
 }
