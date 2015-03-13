@@ -16,6 +16,7 @@
 package org.uberfire.ext.services.shared.preferences;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
@@ -26,6 +27,7 @@ public class GridPreferencesStore {
   private List<GridColumnPreference> columnPreferences = new ArrayList<GridColumnPreference>();
   private int pageSizePreferences;
   private String selectedFilterKey;
+  private HashMap<String,HashMap> customFilters =new HashMap<String, HashMap>(  );
 
   public GridPreferencesStore() {
   }
@@ -73,4 +75,14 @@ public class GridPreferencesStore {
   public void setSelectedFilterKey( String selectedFilterKey ) {
     this.selectedFilterKey = selectedFilterKey;
   }
+
+  public void addCustomFilter(String filterName, HashMap filterParams){
+    customFilters.put(filterName,filterParams);
+  }
+
+  public HashMap getCustomFilters(){
+    return customFilters;
+  }
+
+
 }

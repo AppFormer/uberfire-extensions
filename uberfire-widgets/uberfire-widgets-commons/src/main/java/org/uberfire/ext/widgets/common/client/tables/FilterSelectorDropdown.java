@@ -19,6 +19,8 @@ package org.uberfire.ext.widgets.common.client.tables;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.PopupPanel;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -31,8 +33,6 @@ import java.util.List;
 
 
 public class FilterSelectorDropdown<T> {
-
-    private final PopupPanel popup = new PopupPanel( true );
 
     private GridPreferencesStore gridPreferenceStore;
     private final List<DataGridFilter<T>> dataGridFilterList = new ArrayList<DataGridFilter<T>>();
@@ -55,7 +55,7 @@ public class FilterSelectorDropdown<T> {
     }
 
     public void createDropdownButton( final ListBox listbox ) {
-
+        listbox.clear();
         for ( final DataGridFilter<T> dataGridFilter : dataGridFilterList ) {
             listbox.addItem( dataGridFilter.getFilterName(), dataGridFilter.getKey() );
         }
@@ -63,7 +63,7 @@ public class FilterSelectorDropdown<T> {
             listbox.setSelectedValue( gridPreferenceStore.getSelectedFilterKey() );
             DataGridFilter filter = getFilterByKey( listbox.getValue() );
             if ( filter != null ) {
-                filter.getFilterClickHandler().onClick( null );
+                filter.getFilterCommand().execute();
             }
         }
         listbox.addChangeHandler( new ChangeHandler() {
@@ -72,14 +72,19 @@ public class FilterSelectorDropdown<T> {
                 DataGridFilter filter = getFilterByKey( listbox.getValue() );
                 storeFilterKey( listbox.getValue() );
                 if ( filter != null ) {
-                    filter.getFilterClickHandler().onClick( null );
+                    filter.getFilterCommand().execute();
                 }
             }
         } );
+
     }
 
     public void addFilter( DataGridFilter dataGridFilter ) {
         dataGridFilterList.add( dataGridFilter );
+    }
+
+    public void clearFilters( ) {
+        dataGridFilterList.clear();
     }
 
     private DataGridFilter getFilterByKey( String key ) {
@@ -90,7 +95,7 @@ public class FilterSelectorDropdown<T> {
 
     }
 
-    private void storeFilterKey( String filterkey ) {
+    public void storeFilterKey( String filterkey ) {
         if ( gridPreferenceStore != null && preferencesService != null ) {
             gridPreferenceStore.setSelectedFilterKey( filterkey );
             preferencesService.call( new RemoteCallback<Void>() {

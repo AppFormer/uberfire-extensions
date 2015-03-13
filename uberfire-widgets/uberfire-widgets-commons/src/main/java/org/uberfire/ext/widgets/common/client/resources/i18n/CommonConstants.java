@@ -101,4 +101,11 @@ public interface CommonConstants
     String Items();
 
     String ColorPickerTitle();
+
+    String Add_New_Filter();
+
+    String Filter_Name();
+
+    String Filter_Must_Have_A_Name();
+
 }

@@ -16,6 +16,7 @@
 
 package org.uberfire.ext.widgets.common.client.tables;
 
+import java.util.HashMap;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -450,6 +451,10 @@ public class SimpleTable<T>
         filterSelectorDropdown.addFilter( datagridFilter );
     }
 
+    public void clearFilters() {
+        filterSelectorDropdown.clearFilters();
+    }
+
     public void refreshFilterDropdown() {
         filterSelectorDropdown.createDropdownButton(filterSelectorListBox);
     }
@@ -461,5 +466,15 @@ public class SimpleTable<T>
     public void setShowFilterSelector( boolean showFilterSelector ) {
         this.showFilterSelector = showFilterSelector;
         if(filterSelectorListBox!=null)filterSelectorListBox.setVisible( showFilterSelector );
+    }
+
+    public HashMap<String,HashMap> getStoredCustomFilters(){
+        return this.gridPreferencesStore.getCustomFilters();
+    }
+
+    public void storeNewCustomFilter(String filterkey, HashMap filterParams){
+        this.gridPreferencesStore.addCustomFilter(filterkey,filterParams );
+        this.getGridPreferencesStore().setSelectedFilterKey( filterkey );
+        saveGridPreferences();
     }
 }

@@ -16,29 +16,28 @@
 package org.uberfire.ext.widgets.common.client.tables;
 
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.Header;
+import org.uberfire.mvp.Command;
 
 public class DataGridFilter<T> implements Comparable {
     private String key;
     private String filterName;
-    private ClickHandler filterClickHandler;
+    private Command filterCommand;
     private boolean visible = true;
     private boolean selected = false;
 
     public DataGridFilter( String key,
                            String filterName,
-                           ClickHandler filterClickHandler ) {
+                           Command filterClickHandler ) {
         this.key=key;
         this.filterName = filterName;
-        this.filterClickHandler = filterClickHandler;
+        this.filterCommand = filterClickHandler;
     }
 
     public DataGridFilter( String key,
                            String filterName,
-                           ClickHandler filterClickHandler,
+                           Command filterCommand,
                            boolean visible ) {
-        this( key, filterName, filterClickHandler );
+        this( key, filterName, filterCommand );
         this.visible = visible;
     }
 
@@ -58,12 +57,12 @@ public class DataGridFilter<T> implements Comparable {
         this.filterName = filterName;
     }
 
-    public ClickHandler getFilterClickHandler() {
-        return filterClickHandler;
+    public Command getFilterCommand() {
+        return filterCommand;
     }
 
-    public void setFilterClickHandler( ClickHandler filterClickHandler ) {
-        this.filterClickHandler = filterClickHandler;
+    public void setFilterCommand( Command filterCommand ) {
+        this.filterCommand = filterCommand;
     }
 
     public boolean isVisible() {
