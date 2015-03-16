@@ -104,8 +104,15 @@ public interface CommonConstants
 
     String Add_New_Filter();
 
+    String Filter_Management();
+
     String Filter_Name();
 
     String Filter_Must_Have_A_Name();
+
+    String RemoveFilter();
+
+    String CustomFilters();
+    String NoCustomFilterAvailable();
 
 }

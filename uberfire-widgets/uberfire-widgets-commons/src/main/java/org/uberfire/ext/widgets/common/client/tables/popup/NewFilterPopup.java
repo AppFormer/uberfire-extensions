@@ -21,12 +21,15 @@ import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.uberfire.ext.services.shared.preferences.GridPreferencesStore;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 import org.uberfire.ext.widgets.common.client.common.popups.footers.GenericModalFooter;
 import org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants;
@@ -53,6 +56,10 @@ public class NewFilterPopup extends BaseModal {
     public Form horizontalForm;
 
     @UiField
+    public FlowPanel existingFiltersPanel;
+
+
+    @UiField
     public HelpBlock errorMessages;
 
     @UiField
@@ -63,6 +70,8 @@ public class NewFilterPopup extends BaseModal {
 
     HashMap formValues = new HashMap();
 
+    private GridPreferencesStore gridPreferenceStore;
+
     private final List<ControlGroup> filterControlGroups = new ArrayList<ControlGroup>();
 
     Command addfilterCommand;
@@ -71,7 +80,7 @@ public class NewFilterPopup extends BaseModal {
     private static Binder uiBinder = GWT.create( Binder.class );
 
     public NewFilterPopup( ) {
-        setTitle( CommonConstants.INSTANCE.Add_New_Filter() );
+        setTitle( CommonConstants.INSTANCE.Filter_Management() );
 
         add( uiBinder.createAndBindUi( this ) );
         init();
@@ -96,8 +105,11 @@ public class NewFilterPopup extends BaseModal {
         add( footer );
     }
 
-    public void show( Command addfilterCommand) {
+
+    public void show( Command addfilterCommand, Command refreshFilters, GridPreferencesStore gridPreferenceStore) {
         this.addfilterCommand = addfilterCommand;
+        this.gridPreferenceStore = gridPreferenceStore;
+        showCustomFilters( refreshFilters );
         super.show();
     }
 
@@ -108,8 +120,42 @@ public class NewFilterPopup extends BaseModal {
             closePopup();
         }
     }
+    public void showCustomFilters( final Command refreshFilters){
+        existingFiltersPanel.clear();
+        final HashMap storedCustomFilters = gridPreferenceStore.getCustomFilters();
+        if(storedCustomFilters!=null && storedCustomFilters.size()>0) {
+            Set customFilterKeys = storedCustomFilters.keySet();
+            Iterator it = customFilterKeys.iterator();
+            while ( it.hasNext() ) {
+                final String customFilterName = ( String ) it.next();
+                ControlGroup controlGroup = new ControlGroup();
 
+                ControlLabel controlLabel = new ControlLabel();
+                controlLabel.setTitle(customFilterName );
+                HTML lab = new HTML( "<span style=\"margin-right:10px\">"+customFilterName +"</span>" );
+                controlLabel.add( lab );
+
+                Button removeButton = new Button(CommonConstants.INSTANCE.RemoveFilter()  );
+                removeButton.addClickHandler( new ClickHandler() {
+                    @Override
+                    public void onClick( ClickEvent event ) {
+                        gridPreferenceStore.removeCustomFilter( customFilterName );
+                        refreshFilters.execute();
+                        closePopup();
+                    }
+                } );
+
+                controlGroup.add( controlLabel );
+                controlGroup.add( removeButton );
+                existingFiltersPanel.add( controlGroup );
+            }
+        } else {
+            HTML noCustomFilter = new HTML( "<span style=\"margin-right:10px\">"+ CommonConstants.INSTANCE.NoCustomFilterAvailable() +"</span>" );
+            existingFiltersPanel.add( noCustomFilter);
+        }
+    }
     public void init() {
+
         horizontalForm.clear();
         filterControlGroups.clear();
 

@@ -73,7 +73,9 @@ public class GridPreferencesStore {
   }
 
   public void setSelectedFilterKey( String selectedFilterKey ) {
-    this.selectedFilterKey = selectedFilterKey;
+    if(!"addFilter".equals( selectedFilterKey )) {
+        this.selectedFilterKey = selectedFilterKey;
+    }
   }
 
   public void addCustomFilter(String filterName, HashMap filterParams){
@@ -84,5 +86,8 @@ public class GridPreferencesStore {
     return customFilters;
   }
 
+  public void removeCustomFilter(String filterName){
+    customFilters.remove( filterName);
+  }
 
 }

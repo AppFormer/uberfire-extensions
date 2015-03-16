@@ -21,18 +21,37 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:b="urn:import:com.github.gwtbootstrap.client.ui"
         >
+
+    <ui:with field="i18n" type="org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants"/>
+
     <g:HTMLPanel>
-        <b:Well>
-            <b:Fieldset>
-                <b:Form type="HORIZONTAL" ui:field="horizontalForm">
-                </b:Form>
-            </b:Fieldset>
-        </b:Well>
+        <b:TabPanel ui:field="tabPanel">
+            <b:Tab heading="{i18n.Add_New_Filter}" ui:field="advancedTab">
+                <b:Well>
+                    <b:Fieldset>
+                        <b:Fieldset>
+                            <b:Form type="HORIZONTAL" ui:field="horizontalForm">
+                            </b:Form>
+                        </b:Fieldset>
+                    </b:Fieldset>
+                </b:Well>
+            </b:Tab>
+
+            <b:Tab heading="{i18n.CustomFilters}" active="true" ui:field="basicTab">
+                <b:Well>
+                    <b:Fieldset>
+                        <g:FlowPanel ui:field="existingFiltersPanel"/>
+                    </b:Fieldset>
+                </b:Well>
+            </b:Tab>
+
+        </b:TabPanel>
 
         <b:ControlGroup ui:field="errorMessagesGroup">
             <b:HelpBlock ui:field="errorMessages"/>
         </b:ControlGroup>
 
     </g:HTMLPanel>
+
 
 </ui:UiBinder>
