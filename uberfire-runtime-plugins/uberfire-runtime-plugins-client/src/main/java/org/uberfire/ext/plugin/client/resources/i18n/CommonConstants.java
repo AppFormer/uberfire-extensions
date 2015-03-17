@@ -29,6 +29,10 @@ public interface CommonConstants
 
     String InvalidParameterName();
 
+    String InvalidActivityID();
+
+    String InvalidMenuLabel();
+
     String DuplicateParameterName();
 
     String LoadPerspective();
@@ -46,4 +50,27 @@ public interface CommonConstants
     String ParamValue();
 
     String InvalidGridConfiguration();
+
+    String MenusNoMenuItems();
+
+    String MenusMoveUpHint();
+
+    String MenusMoveDownHint();
+
+    String MenusActivityID();
+
+    String MenusLabel();
+
+    String MenusDeleteHint();
+
+    String MenusDelete();
+
+    String MenusActivityIDIsManatory();
+
+    String MenusLabelIsManatory();
+
+    String DragAndDrop();
+
+    String ClickToDisplay();
+
 }

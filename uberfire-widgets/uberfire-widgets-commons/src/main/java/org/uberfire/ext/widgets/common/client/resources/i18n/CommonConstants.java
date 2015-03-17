@@ -115,4 +115,10 @@ public interface CommonConstants
     String CustomFilters();
     String NoCustomFilterAvailable();
 
+
+    String Refresh();
+
+    String ColumnPickerButtonTooltip();
+
+    String PageSizeSelectorTooltip();
 }

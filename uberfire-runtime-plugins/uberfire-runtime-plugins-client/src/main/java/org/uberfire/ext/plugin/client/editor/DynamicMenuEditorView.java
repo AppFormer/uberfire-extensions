@@ -49,6 +49,8 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.editor.commons.client.BaseEditorViewImpl;
+import org.uberfire.ext.plugin.client.resources.i18n.CommonConstants;
+import org.uberfire.ext.plugin.client.validation.NameValidator;
 import org.uberfire.ext.plugin.client.widget.cell.IconCell;
 import org.uberfire.ext.plugin.model.DynamicMenuItem;
 
@@ -68,9 +70,12 @@ public class DynamicMenuEditorView
 
     }
 
-    final private Driver driver = GWT.create( Driver.class );
+    private final Driver driver = GWT.create( Driver.class );
 
-    final private static ViewBinder uiBinder = GWT.create( ViewBinder.class );
+    private static final ViewBinder uiBinder = GWT.create( ViewBinder.class );
+
+    private static final NameValidator activityIdValidator = NameValidator.activityIdValidator();
+    private static final NameValidator menuLabelValidator = NameValidator.menuLabelValidator();
 
     @UiField
     TextBox activityId;
@@ -93,7 +98,8 @@ public class DynamicMenuEditorView
     HelpInline menuLabelHelpInline;
 
     @UiField(provided = true)
-    CellTable<DynamicMenuItem> menuItems = new CellTable<DynamicMenuItem>( 500, GWT.<CellTable.SelectableResources>create( CellTable.SelectableResources.class ) );
+    CellTable<DynamicMenuItem> menuItems = new CellTable<DynamicMenuItem>( 500,
+                                                                           GWT.<CellTable.SelectableResources>create( CellTable.SelectableResources.class ) );
 
     @UiField
     Button okButton;
@@ -120,11 +126,11 @@ public class DynamicMenuEditorView
     }
 
     private void initTable( final AbstractCellTable<DynamicMenuItem> dynamicMenuTable ) {
-        dynamicMenuTable.setEmptyTableWidget( new Label( "No menu items." ) );
+        dynamicMenuTable.setEmptyTableWidget( new Label( CommonConstants.INSTANCE.MenusNoMenuItems() ) );
 
         {
             final IconCell iCell = new IconCell( IconType.ARROW_UP );
-            iCell.setTooltip( "up row, if click" );
+            iCell.setTooltip( CommonConstants.INSTANCE.MenusMoveUpHint() );
 
             final Column<DynamicMenuItem, String> iconColumn = new Column<DynamicMenuItem, String>( iCell ) {
                 public String getValue( DynamicMenuItem object ) {
@@ -137,17 +143,20 @@ public class DynamicMenuEditorView
                 public void update( final int index,
                                     final DynamicMenuItem object,
                                     final String value ) {
-                    presenter.updateIndex( object, index, DynamicMenuEditorPresenter.UpdateIndexOperation.UP );
+                    presenter.updateIndex( object,
+                                           index,
+                                           DynamicMenuEditorPresenter.UpdateIndexOperation.UP );
                 }
             } );
 
             dynamicMenuTable.addColumn( iconColumn );
-            dynamicMenuTable.setColumnWidth( iconColumn, "25px" );
+            dynamicMenuTable.setColumnWidth( iconColumn,
+                                             "25px" );
         }
 
         {
             final IconCell iCell = new IconCell( IconType.ARROW_DOWN );
-            iCell.setTooltip( "down row, if click" );
+            iCell.setTooltip( CommonConstants.INSTANCE.MenusMoveDownHint() );
 
             final Column<DynamicMenuItem, String> iconColumn = new Column<DynamicMenuItem, String>( iCell ) {
                 public String getValue( DynamicMenuItem object ) {
@@ -160,12 +169,15 @@ public class DynamicMenuEditorView
                 public void update( final int index,
                                     final DynamicMenuItem object,
                                     final String value ) {
-                    presenter.updateIndex( object, index, DynamicMenuEditorPresenter.UpdateIndexOperation.DOWN );
+                    presenter.updateIndex( object,
+                                           index,
+                                           DynamicMenuEditorPresenter.UpdateIndexOperation.DOWN );
                 }
             } );
 
             dynamicMenuTable.addColumn( iconColumn );
-            dynamicMenuTable.setColumnWidth( iconColumn, "25px" );
+            dynamicMenuTable.setColumnWidth( iconColumn,
+                                             "25px" );
         }
 
         {
@@ -177,7 +189,8 @@ public class DynamicMenuEditorView
                 }
             };
 
-            dynamicMenuTable.addColumn( activityCol, "Activity" );
+            dynamicMenuTable.addColumn( activityCol,
+                                        CommonConstants.INSTANCE.MenusActivityID() );
         }
 
         {
@@ -189,19 +202,22 @@ public class DynamicMenuEditorView
                 }
             };
 
-            dynamicMenuTable.addColumn( labelCol, "Label" );
+            dynamicMenuTable.addColumn( labelCol,
+                                        CommonConstants.INSTANCE.MenusLabel() );
         }
 
         {
-            final ButtonCell buttonCell = new ButtonCell( IconType.REMOVE, ButtonType.DANGER, ButtonSize.MINI );
+            final ButtonCell buttonCell = new ButtonCell( IconType.REMOVE,
+                                                          ButtonType.DANGER,
+                                                          ButtonSize.MINI );
 
             final TooltipCellDecorator<String> decorator = new TooltipCellDecorator<String>( buttonCell );
-            decorator.setText( "delete row, if click" );
+            decorator.setText( CommonConstants.INSTANCE.MenusDeleteHint() );
 
             final Column<DynamicMenuItem, String> buttonCol = new Column<DynamicMenuItem, String>( decorator ) {
                 @Override
                 public String getValue( DynamicMenuItem object ) {
-                    return "delete";
+                    return CommonConstants.INSTANCE.MenusDelete();
                 }
             };
 
@@ -215,7 +231,8 @@ public class DynamicMenuEditorView
             } );
 
             dynamicMenuTable.addColumn( buttonCol );
-            dynamicMenuTable.setColumnWidth( buttonCol, "80px" );
+            dynamicMenuTable.setColumnWidth( buttonCol,
+                                             "80px" );
         }
 
         final SingleSelectionModel<DynamicMenuItem> selectionModel = new SingleSelectionModel<DynamicMenuItem>();
@@ -241,17 +258,34 @@ public class DynamicMenuEditorView
 
         boolean hasError = false;
 
-        if ( menuItem.getActivityId() == null || menuItem.getActivityId().isEmpty() ) {
-
+        if ( menuItem.getActivityId() == null || menuItem.getActivityId().trim().isEmpty() ) {
             activityIdControlGroup.setType( ControlGroupType.ERROR );
-            activityIdHelpInline.setText( "Activity Id is mandatory" );
+            activityIdHelpInline.setText( CommonConstants.INSTANCE.MenusActivityIDIsManatory() );
             hasError = true;
+
+        } else if ( !activityIdValidator.isValid( menuItem.getActivityId() ) ) {
+            activityIdControlGroup.setType( ControlGroupType.ERROR );
+            activityIdHelpInline.setText( activityIdValidator.getValidationError() );
+            hasError = true;
+
+        } else {
+            activityIdControlGroup.setType( ControlGroupType.NONE );
+            activityIdHelpInline.setText( "" );
         }
 
-        if ( menuItem.getMenuLabel() == null || menuItem.getMenuLabel().isEmpty() ) {
+        if ( menuItem.getMenuLabel() == null || menuItem.getMenuLabel().trim().isEmpty() ) {
             menuLabelControlGroup.setType( ControlGroupType.ERROR );
-            menuLabelHelpInline.setText( "Label is mandatory." );
+            menuLabelHelpInline.setText( CommonConstants.INSTANCE.MenusLabelIsManatory() );
             hasError = true;
+
+        } else if ( !menuLabelValidator.isValid( menuItem.getMenuLabel() ) ) {
+            menuLabelControlGroup.setType( ControlGroupType.ERROR );
+            menuLabelHelpInline.setText( menuLabelValidator.getValidationError() );
+            hasError = true;
+            
+        } else {
+            menuLabelControlGroup.setType( ControlGroupType.NONE );
+            menuLabelHelpInline.setText( "" );
         }
 
         if ( hasError ) {
@@ -281,4 +315,5 @@ public class DynamicMenuEditorView
         menuLabelControlGroup.setType( ControlGroupType.NONE );
         menuLabelHelpInline.setText( "" );
     }
+
 }
