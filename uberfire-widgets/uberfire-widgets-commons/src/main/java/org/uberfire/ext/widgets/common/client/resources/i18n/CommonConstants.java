@@ -92,9 +92,10 @@ public interface CommonConstants
     String ExceptionGeneric0( final String message );
 
     String ItemDeletedSuccessfully();
-    String DeletePopupTitle();
-    String DeletePopupDelete();
 
+    String DeletePopupTitle();
+
+    String DeletePopupDelete();
 
     String Version();
 
@@ -113,8 +114,8 @@ public interface CommonConstants
     String RemoveFilter();
 
     String CustomFilters();
-    String NoCustomFilterAvailable();
 
+    String NoCustomFilterAvailable();
 
     String Refresh();
 
