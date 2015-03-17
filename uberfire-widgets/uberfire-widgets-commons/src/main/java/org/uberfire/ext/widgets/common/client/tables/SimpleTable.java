@@ -16,12 +16,11 @@
 
 package org.uberfire.ext.widgets.common.client.tables;
 
+import java.util.HashMap;
 import java.util.List;
 import javax.inject.Inject;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.DataGrid;
-import com.github.gwtbootstrap.client.ui.Label;
+import com.github.gwtbootstrap.client.ui.*;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -73,6 +72,9 @@ public class SimpleTable<T>
     public Button columnPickerButton;
 
     @UiField(provided = true)
+    public ListBox filterSelectorListBox;
+
+    @UiField(provided = true)
     public DataGrid<T> dataGrid;
 
     @UiField
@@ -87,6 +89,10 @@ public class SimpleTable<T>
     private String emptyTableCaption;
 
     private ColumnPicker<T> columnPicker;
+
+    private FilterSelectorDropdown<T> filterSelectorDropdown;
+
+    private boolean showFilterSelector = false;
 
     private GridPreferencesStore gridPreferencesStore;
 
@@ -127,7 +133,7 @@ public class SimpleTable<T>
         setEmptyTableWidget();
 
         columnPicker = new ColumnPicker<T>( dataGrid, gridPreferencesStore );
-        
+
         columnPicker.addColumnChangedHandler( new ColumnChangedHandler() {
 
             @Override
@@ -141,18 +147,16 @@ public class SimpleTable<T>
                     for ( GridColumnPreference gcp : columnsState ) {
                             gridPreferencesStore.addGridColumnPreference( gcp );
                     }
-
-                    preferencesService.call( new RemoteCallback<Void>() {
-
-                        @Override
-                        public void callback( Void response ) {
-
-                        }
-                    } ).saveGridPreferences( gridPreferencesStore );     
+                    saveGridPreferences();
                 }
 
             }
         } );
+
+        filterSelectorDropdown = new FilterSelectorDropdown<T>( gridPreferencesStore );
+        filterSelectorListBox = new ListBox( );
+        filterSelectorListBox.setVisible( showFilterSelector );
+
         columnPickerButton = columnPicker.createToggleButton();
 
         initWidget( makeWidget() );
@@ -181,6 +185,7 @@ public class SimpleTable<T>
     }
 
     public void refresh() {
+
         dataGrid.setVisibleRangeAndClearData( dataGrid.getVisibleRange(),
                                               true );
     }
@@ -253,6 +258,7 @@ public class SimpleTable<T>
 
     public void setPreferencesService( Caller<UserDataGridPreferencesService> preferencesService ) {
         this.preferencesService = preferencesService;
+        filterSelectorDropdown.setPreferencesService( preferencesService );
     }
 
     @Override
@@ -349,13 +355,7 @@ public class SimpleTable<T>
                     for ( GridColumnPreference gcp : columnsState ) {
                             gridPreferencesStore.addGridColumnPreference( gcp );
                     }
-                    preferencesService.call( new RemoteCallback<Void>() {
-
-                        @Override
-                        public void callback( Void response ) {
-
-                        }
-                    } ).saveGridPreferences( gridPreferencesStore );
+                    saveGridPreferences();
                 }
             }
 
@@ -430,6 +430,51 @@ public class SimpleTable<T>
         //   if I would like to compare with the current state for changes
         this.gridPreferencesStore = gridPreferences;
         columnPicker.setGridPreferencesStore( gridPreferences );
+        filterSelectorDropdown.setGridPreferencesStore( gridPreferences );
     }
 
+    public GridPreferencesStore getGridPreferencesStore() {
+        return this.gridPreferencesStore;
+    }
+
+    public void saveGridPreferences() {
+        if ( gridPreferencesStore != null && preferencesService != null ) {
+            preferencesService.call( new RemoteCallback<Void>() {
+                @Override
+                public void callback( Void response ) {
+                }
+            } ).saveGridPreferences( gridPreferencesStore );
+        }
+    }
+
+    public void addFilter(DataGridFilter<T> datagridFilter) {
+        filterSelectorDropdown.addFilter( datagridFilter );
+    }
+
+    public void clearFilters() {
+        filterSelectorDropdown.clearFilters();
+    }
+
+    public void refreshFilterDropdown() {
+        filterSelectorDropdown.createDropdownButton(filterSelectorListBox);
+    }
+
+    public boolean isShowFilterSelector() {
+        return showFilterSelector;
+    }
+
+    public void setShowFilterSelector( boolean showFilterSelector ) {
+        this.showFilterSelector = showFilterSelector;
+        if(filterSelectorListBox!=null)filterSelectorListBox.setVisible( showFilterSelector );
+    }
+
+    public HashMap<String,HashMap> getStoredCustomFilters(){
+        return this.gridPreferencesStore.getCustomFilters();
+    }
+
+    public void storeNewCustomFilter(String filterkey, HashMap filterParams){
+        this.gridPreferencesStore.addCustomFilter(filterkey,filterParams );
+        this.getGridPreferencesStore().setSelectedFilterKey( filterkey );
+        saveGridPreferences();
+    }
 }

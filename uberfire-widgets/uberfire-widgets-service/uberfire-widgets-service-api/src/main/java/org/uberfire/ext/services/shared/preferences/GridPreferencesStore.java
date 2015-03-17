@@ -16,6 +16,7 @@
 package org.uberfire.ext.services.shared.preferences;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
@@ -24,12 +25,18 @@ public class GridPreferencesStore {
 
   private GridGlobalPreferences globalPreferences;
   private List<GridColumnPreference> columnPreferences = new ArrayList<GridColumnPreference>();
+  private int pageSizePreferences;
+  private String selectedFilterKey;
+  private HashMap<String,HashMap> customFilters =new HashMap<String, HashMap>(  );
 
   public GridPreferencesStore() {
   }
 
   public GridPreferencesStore(GridGlobalPreferences globalPreferences) {
     this.globalPreferences = globalPreferences;
+    if(globalPreferences!=null) {
+      this.pageSizePreferences= globalPreferences.getPageSize();
+    }
   }
 
   public GridGlobalPreferences getGlobalPreferences() {
@@ -46,6 +53,41 @@ public class GridPreferencesStore {
   
   public void resetGridColumnPreferences(){
     columnPreferences.clear();
+  }
+  public void resetPageSizePreferences(){
+    if(globalPreferences!=null) {
+      this.pageSizePreferences= globalPreferences.getPageSize();
+    }
+  }
+
+  public int getPageSizePreferences() {
+    return pageSizePreferences;
+  }
+
+  public void setPageSizePreferences( int pageSizePreferences ) {
+    this.pageSizePreferences = pageSizePreferences;
+  }
+
+  public String getSelectedFilterKey() {
+    return selectedFilterKey;
+  }
+
+  public void setSelectedFilterKey( String selectedFilterKey ) {
+    if(!"addFilter".equals( selectedFilterKey )) {
+        this.selectedFilterKey = selectedFilterKey;
+    }
+  }
+
+  public void addCustomFilter(String filterName, HashMap filterParams){
+    customFilters.put(filterName,filterParams);
+  }
+
+  public HashMap getCustomFilters(){
+    return customFilters;
+  }
+
+  public void removeCustomFilter(String filterName){
+    customFilters.remove( filterName);
   }
 
 }

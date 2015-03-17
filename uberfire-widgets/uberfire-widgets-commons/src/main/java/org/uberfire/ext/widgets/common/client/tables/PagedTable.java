@@ -19,6 +19,7 @@ package org.uberfire.ext.widgets.common.client.tables;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -32,6 +33,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import org.uberfire.ext.services.shared.preferences.GridGlobalPreferences;
+import org.uberfire.ext.services.shared.preferences.GridPreferencesStore;
 import org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants;
 
 
@@ -59,17 +61,26 @@ public class PagedTable<T>
     public Button pageSizesSelector;
 
     private boolean showPageSizesSelector = false;
-    private PopupPanel popup = new PopupPanel(true);
+
+    private PopupPanel pageSizePopup ;
+
+    public PagedTable(){
+        super();
+    }
 
     public PagedTable( final int pageSize ) {
         super();
-        setPageSizeValue( pageSize );
+        this.pageSize=pageSize;
+        this.dataGrid.setPageSize( pageSize );
+        this.pager.setDisplay( dataGrid );
     }
 
     public PagedTable( final int pageSize,
                        final ProvidesKey<T> providesKey ) {
         super( providesKey );
-        setPageSizeValue( pageSize );
+        this.pageSize =pageSize;
+        this.dataGrid.setPageSize( pageSize );
+        this.pager.setDisplay( dataGrid );
     }
 
     public PagedTable( final int pageSize,
@@ -77,7 +88,9 @@ public class PagedTable<T>
                        final GridGlobalPreferences gridGlobalPreferences ) {
         super( providesKey, gridGlobalPreferences );
         pageSizesSelector.setVisible( false );
-        setPageSizeValue( pageSize );
+        this.pageSize=pageSize;
+        this.dataGrid.setPageSize( pageSize );
+        this.pager.setDisplay( dataGrid );
     }
 
     public PagedTable( final int pageSize,
@@ -87,10 +100,26 @@ public class PagedTable<T>
 
         super( providesKey, gridGlobalPreferences );
         this.showPageSizesSelector = showPageSizesSelector;
-        setPageSizeValue( pageSize );
+        this.pageSize=pageSize;
+        this.dataGrid.setPageSize( pageSize );
+        this.pager.setDisplay( dataGrid );
     }
-    
+    public PagedTable( final int pageSize,
+                       final ProvidesKey<T> providesKey,
+                       final GridGlobalPreferences gridGlobalPreferences,
+                       final boolean showPageSizesSelector,
+                       final boolean showFilterSelector) {
+
+        super( providesKey, gridGlobalPreferences );
+        this.showPageSizesSelector = showPageSizesSelector;
+        this.pageSize=pageSize;
+        this.dataGrid.setPageSize( pageSize );
+        this.pager.setDisplay( dataGrid );
+        super.setShowFilterSelector( showFilterSelector );
+    }
+
     protected Widget makeWidget() {
+        this.pageSizePopup = new PopupPanel(true);
         pageSizesSelector = createPageSizesToggleButton();
         return uiBinder.createAndBindUi( this );
     }
@@ -112,13 +141,12 @@ public class PagedTable<T>
         return this.pager.getPageStart();
     }
 
-    public final void setPageSizeValue( int pageSize ) {
-        this.pageSize = pageSize;
+    public final void setPageSizeValue(  ) {
+        pageSize = getPageSizeStored();
         this.dataGrid.setPageSize( pageSize );
-        this.pager.setDisplay( dataGrid );
         this.pager.setPageSize( pageSize );
-        this.dataGrid.setHeight( ( pageSize * 41 )+ 42 + "px" );
-        pageSizesSelector.setVisible(this.showPageSizesSelector);
+        this.dataGrid.setHeight( ( pageSize * 41 ) + 42 + "px" );
+        pageSizesSelector.setVisible( this.showPageSizesSelector );
     }
 
     public Button createPageSizesToggleButton() {
@@ -126,28 +154,24 @@ public class PagedTable<T>
         button.setToggle(true);
         button.setIcon( IconType.LIST_ALT);
         button.setTitle( CommonConstants.INSTANCE.PageSizeSelectorTooltip() );
-        popup = new PopupPanel(true);
 
-        popup.getElement().getStyle().setZIndex(Integer.MAX_VALUE);
-        popup.addAutoHidePartner(button.getElement());
-        popup.addCloseHandler(new CloseHandler<PopupPanel>() {
-            public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
-                if (popupPanelCloseEvent.isAutoClosed()) {
-                    button.setActive(false);
-                }
-            }
-        });
+        pageSizePopup.getElement().getStyle().setZIndex( Integer.MAX_VALUE );
+        pageSizePopup.addAutoHidePartner( button.getElement() );
+        pageSizePopup.addCloseHandler( new CloseHandler<PopupPanel>() {
+            public void onClose( CloseEvent<PopupPanel> popupPanelCloseEvent ) {
+                    button.setActive( false );
+        } });
 
-        button.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                if (!button.isActive()) {
+       button.addClickHandler( new ClickHandler() {
+            public void onClick( ClickEvent event ) {
+                if ( !button.isActive() ) {
                     showSelectPageSizePopup( button.getAbsoluteLeft() + button.getOffsetWidth(),
-                            button.getAbsoluteTop() + button.getOffsetHeight());
+                            button.getAbsoluteTop() + button.getOffsetHeight() );
                 } else {
-                    popup.hide(false);
+                    pageSizePopup.hide( );
                 }
-            }
-        });
+           }
+        } );
         return button;
     }
 
@@ -163,19 +187,57 @@ public class PagedTable<T>
             rb.addClickHandler( new ClickHandler() {
                 @Override
                 public void onClick( ClickEvent event ) {
-                    setPageSizeValue( selectedPageSize );
-                    popup.hide();
-                    pageSizesSelector.setActive( false );
-
+                    storePageSizeInGridPreferences( selectedPageSize );
+                    setPageSizeValue( );
+                    pageSizePopup.hide();
                 }
             } );
             popupContent.add(rb);
         }
+        Button resetButton = new Button( "Reset" );
+        resetButton.setSize( ButtonSize.MINI );
+        resetButton.addClickHandler( new ClickHandler() {
 
-        popup.setWidget(popupContent);
-        popup.show();
-        int finalLeft = left - popup.getOffsetWidth();
-        popup.setPopupPosition(finalLeft, top);
+            @Override
+            public void onClick( ClickEvent event ) {
+                resetPageSize();
+                pageSizePopup.hide();
+            }
+        } );
 
+        popupContent.add( resetButton );
+
+
+        pageSizePopup.setWidget( popupContent );
+        pageSizePopup.show();
+        int finalLeft = left - pageSizePopup.getOffsetWidth();
+        pageSizePopup.setPopupPosition( finalLeft, top );
+
+    }
+
+    private void storePageSizeInGridPreferences(int pageSize) {
+        GridPreferencesStore gridPreferencesStore =super.getGridPreferencesStore();
+        if ( gridPreferencesStore != null ) {
+            gridPreferencesStore.setPageSizePreferences( pageSize );
+            super.saveGridPreferences();
+        }
+    }
+
+    private int getPageSizeStored(){
+        GridPreferencesStore gridPreferencesStore =super.getGridPreferencesStore();
+        if ( gridPreferencesStore != null ) {
+            return gridPreferencesStore.getPageSizePreferences();
+        }
+        return pageSize;
+    }
+
+    private void resetPageSize() {
+        GridPreferencesStore gridPreferencesStore = super.getGridPreferencesStore();
+
+        if ( gridPreferencesStore != null ) {
+            gridPreferencesStore.resetPageSizePreferences();
+            storePageSizeInGridPreferences( gridPreferencesStore.getGlobalPreferences().getPageSize() );
+            setPageSizeValue();
+        }
     }
 }
