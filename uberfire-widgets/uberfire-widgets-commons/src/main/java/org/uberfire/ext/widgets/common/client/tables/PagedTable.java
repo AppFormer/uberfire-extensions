@@ -19,6 +19,7 @@ package org.uberfire.ext.widgets.common.client.tables;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
+import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -153,7 +154,7 @@ public class PagedTable<T>
         button.setToggle(true);
         button.setIcon( IconType.LIST_ALT);
         button.setTitle( CommonConstants.INSTANCE.PageSizeSelectorTooltip() );
-        
+
         pageSizePopup.getElement().getStyle().setZIndex( Integer.MAX_VALUE );
         pageSizePopup.addAutoHidePartner( button.getElement() );
         pageSizePopup.addCloseHandler( new CloseHandler<PopupPanel>() {
@@ -186,19 +187,57 @@ public class PagedTable<T>
             rb.addClickHandler( new ClickHandler() {
                 @Override
                 public void onClick( ClickEvent event ) {
-                    setPageSizeValue( selectedPageSize );
-                    popup.hide();
-                    pageSizesSelector.setActive( false );
-
+                    storePageSizeInGridPreferences( selectedPageSize );
+                    setPageSizeValue( );
+                    pageSizePopup.hide();
                 }
             } );
             popupContent.add(rb);
         }
+        Button resetButton = new Button( "Reset" );
+        resetButton.setSize( ButtonSize.MINI );
+        resetButton.addClickHandler( new ClickHandler() {
 
-        popup.setWidget(popupContent);
-        popup.show();
-        int finalLeft = left - popup.getOffsetWidth();
-        popup.setPopupPosition(finalLeft, top);
+            @Override
+            public void onClick( ClickEvent event ) {
+                resetPageSize();
+                pageSizePopup.hide();
+            }
+        } );
 
+        popupContent.add( resetButton );
+
+
+        pageSizePopup.setWidget( popupContent );
+        pageSizePopup.show();
+        int finalLeft = left - pageSizePopup.getOffsetWidth();
+        pageSizePopup.setPopupPosition( finalLeft, top );
+
+    }
+
+    private void storePageSizeInGridPreferences(int pageSize) {
+        GridPreferencesStore gridPreferencesStore =super.getGridPreferencesStore();
+        if ( gridPreferencesStore != null ) {
+            gridPreferencesStore.setPageSizePreferences( pageSize );
+            super.saveGridPreferences();
+        }
+    }
+
+    private int getPageSizeStored(){
+        GridPreferencesStore gridPreferencesStore =super.getGridPreferencesStore();
+        if ( gridPreferencesStore != null ) {
+            return gridPreferencesStore.getPageSizePreferences();
+        }
+        return pageSize;
+    }
+
+    private void resetPageSize() {
+        GridPreferencesStore gridPreferencesStore = super.getGridPreferencesStore();
+
+        if ( gridPreferencesStore != null ) {
+            gridPreferencesStore.resetPageSizePreferences();
+            storePageSizeInGridPreferences( gridPreferencesStore.getGlobalPreferences().getPageSize() );
+            setPageSizeValue();
+        }
     }
 }
