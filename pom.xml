@@ -25,12 +25,12 @@
     <groupId>org.jboss.integration-platform</groupId>
     <artifactId>jboss-integration-platform-parent</artifactId>
     <!-- Keep in sync with property <version.org.jboss.integration-platform> -->
-    <version>6.0.0.CR22</version>
+    <version>6.0.0.CR26</version>
   </parent>
 
   <groupId>org.uberfire</groupId>
   <artifactId>uberfire-extensions</artifactId>
-  <version>0.5.2-SNAPSHOT</version>
+  <version>0.5.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Extensions to UberFire</name>
