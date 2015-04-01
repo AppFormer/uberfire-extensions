@@ -17,6 +17,7 @@
 package org.uberfire.ext.widgets.common.client.tables;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -44,6 +45,7 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
+
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.security.shared.api.identity.User;
@@ -51,7 +53,8 @@ import org.uberfire.ext.widgets.common.client.resources.CommonResources;
 import org.uberfire.ext.services.shared.preferences.GridColumnPreference;
 import org.uberfire.ext.services.shared.preferences.GridGlobalPreferences;
 import org.uberfire.ext.services.shared.preferences.GridPreferencesStore;
-import org.uberfire.ext.services.shared.preferences.UserDataGridPreferencesService;
+import org.uberfire.ext.services.shared.preferences.UserPreferencesService;
+import org.uberfire.ext.services.shared.preferences.UserPreferencesType;
 
 /**
  * A composite Widget that shows rows of data (not-paged) and a "column picker"
@@ -90,9 +93,9 @@ public class SimpleTable<T>
 
     private GridPreferencesStore gridPreferencesStore;
 
-    @Inject
-    private Caller<UserDataGridPreferencesService> preferencesService;
-
+    @Inject 
+    private Caller<UserPreferencesService> preferencesService;
+    
     @Inject
     private User identity;
 
@@ -244,7 +247,7 @@ public class SimpleTable<T>
         dataGrid.setVisibleRange( range );
     }
 
-    public void setPreferencesService( Caller<UserDataGridPreferencesService> preferencesService ) {
+    public void setPreferencesService( Caller<UserPreferencesService> preferencesService ) {
         this.preferencesService = preferencesService;
     }
 
@@ -424,12 +427,15 @@ public class SimpleTable<T>
     }
 
     public void saveGridPreferences() {
+        
         if ( gridPreferencesStore != null && preferencesService != null ) {
+            gridPreferencesStore.setPreferenceKey( gridPreferencesStore.getGlobalPreferences().getKey() );
+            gridPreferencesStore.setType( UserPreferencesType.GRIDPREFERENCES );
             preferencesService.call( new RemoteCallback<Void>() {
                 @Override
                 public void callback( Void response ) {
                 }
-            } ).saveGridPreferences( gridPreferencesStore );
+            } ).saveUserPreferences( gridPreferencesStore );
         }
     }
 
