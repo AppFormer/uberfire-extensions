@@ -19,12 +19,15 @@ package org.uberfire.ext.widgets.common.client.tables;
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.uberfire.ext.services.shared.preferences.GridPreferencesStore;
-import org.uberfire.ext.services.shared.preferences.UserDataGridPreferencesService;
+import org.uberfire.ext.services.shared.preferences.UserPreferencesService;
+import org.uberfire.ext.services.shared.preferences.UserPreferencesType;
 
 import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +39,7 @@ public class FilterSelectorDropdown<T> {
     private String selectedFilterKey = "NONE";
 
     @Inject
-    private Caller<UserDataGridPreferencesService> preferencesService;
+    private Caller<UserPreferencesService> preferencesService;
 
     public FilterSelectorDropdown( GridPreferencesStore gridPreferences ) {
         this.gridPreferenceStore = gridPreferences;
@@ -47,7 +50,7 @@ public class FilterSelectorDropdown<T> {
         this.gridPreferenceStore = gridPreferences;
     }
 
-    public void setPreferencesService( Caller<UserDataGridPreferencesService> preferencesService ) {
+    public void setPreferencesService( Caller<UserPreferencesService> preferencesService ) {
         this.preferencesService = preferencesService;
     }
 
@@ -95,11 +98,13 @@ public class FilterSelectorDropdown<T> {
     public void storeFilterKey( String filterkey ) {
         if ( gridPreferenceStore != null && preferencesService != null ) {
             gridPreferenceStore.setSelectedFilterKey( filterkey );
+            gridPreferenceStore.setType( UserPreferencesType.GRIDPREFERENCES );
+            gridPreferenceStore.setPreferenceKey( gridPreferenceStore.getGlobalPreferences().getKey() );
             preferencesService.call( new RemoteCallback<Void>() {
                 @Override
                 public void callback( Void response ) {
                 }
-            } ).saveGridPreferences( gridPreferenceStore );
+            } ).saveUserPreferences( gridPreferenceStore );
         }
     }
 
