@@ -1,5 +1,7 @@
 package org.uberfire.ext.properties.editor.client.widgets;
 
+import org.uberfire.commons.data.Pair;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -20,6 +22,14 @@ public class PropertyEditorComboBox extends AbstractPropertyEditorWidget {
         listBox.addItem( value );
     }
 
+    public void addItem( Pair<String,String> pair ) {
+        listBox.addItem( pair.getK1() ,pair.getK2() );
+    }
+    
+    public Pair<String,String> getSelectedPair( int selected ){
+        return Pair.newPair( listBox.getItemText( selected ) , listBox.getValue( selected ) );
+        
+    }
     public void setSelectedIndex( int selected ) {
         listBox.setSelectedIndex( selected );
     }
@@ -36,7 +46,9 @@ public class PropertyEditorComboBox extends AbstractPropertyEditorWidget {
             }
         }
     }
-
+    public void clear(){
+        listBox.clear();
+    }
     public String getItemText( int selectedIndex ) {
         return listBox.getItemText( selectedIndex );
     }
