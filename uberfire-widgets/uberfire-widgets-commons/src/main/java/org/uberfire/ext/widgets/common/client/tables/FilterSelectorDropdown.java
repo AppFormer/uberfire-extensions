@@ -16,10 +16,6 @@
 
 package org.uberfire.ext.widgets.common.client.tables;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.inject.Inject;
-
 import com.github.gwtbootstrap.client.ui.ListBox;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -28,6 +24,11 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import org.uberfire.ext.services.shared.preferences.GridPreferencesStore;
 import org.uberfire.ext.services.shared.preferences.UserPreferencesService;
 import org.uberfire.ext.services.shared.preferences.UserPreferencesType;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class FilterSelectorDropdown<T> {
 
@@ -38,11 +39,11 @@ public class FilterSelectorDropdown<T> {
     @Inject
     private Caller<UserPreferencesService> preferencesService;
 
-    public FilterSelectorDropdown( final GridPreferencesStore gridPreferences ) {
+    public FilterSelectorDropdown( GridPreferencesStore gridPreferences ) {
         this.gridPreferenceStore = gridPreferences;
     }
 
-    public void setGridPreferencesStore( final GridPreferencesStore gridPreferences ) {
+    public void setGridPreferencesStore( GridPreferencesStore gridPreferences ) {
         this.gridPreferenceStore = gridPreferences;
     }
 
@@ -53,8 +54,7 @@ public class FilterSelectorDropdown<T> {
     public void createDropdownButton( final ListBox listbox ) {
         listbox.clear();
         for ( final DataGridFilter<T> dataGridFilter : dataGridFilterList ) {
-            listbox.addItem( dataGridFilter.getFilterName(),
-                             dataGridFilter.getKey() );
+            listbox.addItem( dataGridFilter.getKey(), dataGridFilter.getKey() );
         }
         if ( gridPreferenceStore != null && gridPreferenceStore.getSelectedFilterKey() != null && gridPreferenceStore.getSelectedFilterKey().trim().length() > 0 ) {
             listbox.setSelectedValue( gridPreferenceStore.getSelectedFilterKey() );
@@ -73,23 +73,23 @@ public class FilterSelectorDropdown<T> {
                 }
             }
         } );
+
     }
 
-    public void addFilter( final DataGridFilter dataGridFilter ) {
+    public void addFilter( DataGridFilter dataGridFilter ) {
         dataGridFilterList.add( dataGridFilter );
     }
 
-    public void clearFilters() {
+    public void clearFilters( ) {
         dataGridFilterList.clear();
     }
 
-    private DataGridFilter getFilterByKey( final String key ) {
+    private DataGridFilter getFilterByKey( String key ) {
         for ( final DataGridFilter<T> dataGridFilter : dataGridFilterList ) {
-            if ( dataGridFilter.getKey().equals( key ) ) {
-                return dataGridFilter;
-            }
+            if ( dataGridFilter.getKey().equals( key ) ) return dataGridFilter;
         }
         return null;
+
     }
 
     public void storeFilterKey( final String filterkey ) {

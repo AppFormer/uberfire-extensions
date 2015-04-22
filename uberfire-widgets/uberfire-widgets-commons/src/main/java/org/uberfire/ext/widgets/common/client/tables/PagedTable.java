@@ -26,6 +26,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -34,6 +35,7 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
 import org.uberfire.ext.services.shared.preferences.GridGlobalPreferences;
 import org.uberfire.ext.services.shared.preferences.GridPreferencesStore;
+import org.uberfire.ext.widgets.common.client.resources.UberfireSimplePagerResources;
 import org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants;
 
 
@@ -63,6 +65,10 @@ public class PagedTable<T>
     private boolean showPageSizesSelector = false;
 
     private PopupPanel pageSizePopup ;
+
+
+    private boolean showFFButton= true;
+    private boolean showLButton = true;
 
     public PagedTable(){
         super();
@@ -239,5 +245,24 @@ public class PagedTable<T>
             storePageSizeInGridPreferences( gridPreferencesStore.getGlobalPreferences().getPageSize() );
             loadPageSizePreferences();
         }
+    }
+
+
+    public void setShowLastPagerButton( boolean showLastPagerButton ) {
+        this.showLButton = showLastPagerButton;
+    }
+
+    public void setShowFastFordwardPagerButton( boolean showFastFordwardPagerButton ) {
+        this.showFFButton = showFastFordwardPagerButton;
+    }
+
+    @UiFactory
+    public UberfireSimplePager makeUberfireSimplePager () {
+        return new UberfireSimplePager(
+                UberfireSimplePager.TextLocation.CENTER,
+                UberfireSimplePagerResources.INSTANCE,
+                this.showFFButton,          //avoid pager FastForwardButton
+                100,
+                this.showLButton );        //avoid pager LastPageButton
     }
 }
