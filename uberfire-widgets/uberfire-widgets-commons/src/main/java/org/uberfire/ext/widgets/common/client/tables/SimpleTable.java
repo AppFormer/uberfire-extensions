@@ -16,14 +16,12 @@
 
 package org.uberfire.ext.widgets.common.client.tables;
 
-import java.util.HashMap;
 import java.util.List;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.DataGrid;
 import com.github.gwtbootstrap.client.ui.Label;
-import com.github.gwtbootstrap.client.ui.ListBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -76,9 +74,6 @@ public class SimpleTable<T>
     public Button columnPickerButton;
 
     @UiField(provided = true)
-    public ListBox filterSelectorListBox;
-
-    @UiField(provided = true)
     public DataGrid<T> dataGrid;
 
     @UiField
@@ -97,7 +92,6 @@ public class SimpleTable<T>
 
     private ColumnPicker<T> columnPicker;
 
-    private FilterSelectorDropdown<T> filterSelectorDropdown;
 
     private boolean showFilterSelector = false;
 
@@ -165,9 +159,6 @@ public class SimpleTable<T>
             }
         } );
 
-        filterSelectorDropdown = new FilterSelectorDropdown<T>( gridPreferencesStore );
-        filterSelectorListBox = new ListBox();
-        filterSelectorListBox.setVisible( showFilterSelector );
 
         columnPickerButton = columnPicker.createToggleButton();
 
@@ -268,7 +259,6 @@ public class SimpleTable<T>
 
     public void setPreferencesService( final Caller<UserPreferencesService> preferencesService ) {
         this.preferencesService = preferencesService;
-        filterSelectorDropdown.setPreferencesService( preferencesService );
     }
 
     @Override
@@ -451,7 +441,6 @@ public class SimpleTable<T>
         //   if I would like to compare with the current state for changes
         this.gridPreferencesStore = gridPreferences;
         columnPicker.setGridPreferencesStore( gridPreferences );
-        filterSelectorDropdown.setGridPreferencesStore( gridPreferences );
     }
 
     public GridPreferencesStore getGridPreferencesStore() {
@@ -471,40 +460,6 @@ public class SimpleTable<T>
         }
     }
 
-    public void addFilter( final DataGridFilter<T> datagridFilter ) {
-        filterSelectorDropdown.addFilter( datagridFilter );
-    }
-
-    public void clearFilters() {
-        filterSelectorDropdown.clearFilters();
-    }
-
-    public void refreshFilterDropdown() {
-        filterSelectorDropdown.createDropdownButton( filterSelectorListBox );
-    }
-
-    public boolean isShowFilterSelector() {
-        return showFilterSelector;
-    }
-
-    public void setShowFilterSelector( final boolean showFilterSelector ) {
-        this.showFilterSelector = showFilterSelector;
-        if ( filterSelectorListBox != null ) {
-            filterSelectorListBox.setVisible( showFilterSelector );
-        }
-    }
-
-    public HashMap<String, HashMap> getStoredCustomFilters() {
-        return this.gridPreferencesStore.getCustomFilters();
-    }
-
-    public void storeNewCustomFilter( final String filterkey,
-                                      final HashMap filterParams ) {
-        this.gridPreferencesStore.addCustomFilter( filterkey,
-                                                   filterParams );
-        this.getGridPreferencesStore().setSelectedFilterKey( filterkey );
-        saveGridPreferences();
-    }
 
     public void setcolumnPickerButtonVisibe( final boolean show ) {
         columnPickerButton.setVisible( show );

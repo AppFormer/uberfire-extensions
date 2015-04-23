@@ -110,19 +110,6 @@ public class PagedTable<T>
         this.dataGrid.setPageSize( pageSize );
         this.pager.setDisplay( dataGrid );
     }
-    public PagedTable( final int pageSize,
-                       final ProvidesKey<T> providesKey,
-                       final GridGlobalPreferences gridGlobalPreferences,
-                       final boolean showPageSizesSelector,
-                       final boolean showFilterSelector) {
-
-        super( providesKey, gridGlobalPreferences );
-        this.showPageSizesSelector = showPageSizesSelector;
-        this.pageSize=pageSize;
-        this.dataGrid.setPageSize( pageSize );
-        this.pager.setDisplay( dataGrid );
-        super.setShowFilterSelector( showFilterSelector );
-    }
 
     protected Widget makeWidget() {
         this.pageSizePopup = new PopupPanel(true);

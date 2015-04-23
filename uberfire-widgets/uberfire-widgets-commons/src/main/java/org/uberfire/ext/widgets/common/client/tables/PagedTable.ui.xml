@@ -52,7 +52,6 @@
             </g:cell>
             <g:cell width="33%">
                 <g:FlowPanel width="100%" ui:field="rightToolbar" addStyleNames="{style.rightToolBar}">
-                    <b:ListBox ui:field="filterSelectorListBox"/>
                     <b:Button ui:field="pageSizesSelector" toggle="true" icon="LIST_ALT"/>
                     <b:Button ui:field="columnPickerButton" toggle="true" icon="LIST_UL"/>
                 </g:FlowPanel>

@@ -83,7 +83,9 @@ public class FilterPagedTable<T>
             tabPanel.remove( index );
             multiGridPreferencesStore.removeTab( gridKey );
             multiGridPreferencesStore.setSelectedGrid( "" );
-            if(tabPanel.getWidgetCount()>1) tabPanel.selectTab( 0 );
+            if(tabPanel.getWidgetCount()>1){
+                tabPanel.selectTab( index-1 );
+            }
             preferencesService.call().saveUserPreferences( multiGridPreferencesStore );
         }
     }
@@ -173,10 +175,12 @@ public class FilterPagedTable<T>
             public void onSelection( SelectionEvent<Integer> event ) {
                 Integer selectedPosition = event.getSelectedItem();
                 ArrayList<String> tabsId = multiGridPreferencesStore.getGridsId();
-                String key = tabsId.get( selectedPosition );
-                multiGridPreferencesStore.setSelectedGrid( key );
-                preferencesService.call().saveUserPreferences( multiGridPreferencesStore );
-                dataGridFilterHashMap.get( key ).getFilterCommand().execute();
+                if(selectedPosition< tabsId.size()) {
+                    String key = tabsId.get( selectedPosition );
+                    multiGridPreferencesStore.setSelectedGrid( key );
+                    preferencesService.call().saveUserPreferences( multiGridPreferencesStore );
+                    dataGridFilterHashMap.get( key ).getFilterCommand().execute();
+                }
             }
         } );
 
@@ -211,15 +215,6 @@ public class FilterPagedTable<T>
             tabPanel.selectTab( selectedTab );
         else
             tabPanel.selectTab( 0 );
-
-    }
-
-    public void storeNewCustomFilter( String gridKey, HashMap filterParams,PagedTable<T> pagedTable ) {
-        pagedTable.storeNewCustomFilter( gridKey, filterParams );
-    }
-
-    public void clearFilters( String gridKey, PagedTable<T> pagedTable ) {
-        pagedTable.clearFilters();
 
     }
 
