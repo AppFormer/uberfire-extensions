@@ -146,7 +146,7 @@ public class WiresTreesScreen extends WiresCanvas {
     @WorkbenchPartTitle
     @Override
     public String getTitle() {
-        return "Canvas";
+        return "Trees";
     }
 
     @WorkbenchPartView

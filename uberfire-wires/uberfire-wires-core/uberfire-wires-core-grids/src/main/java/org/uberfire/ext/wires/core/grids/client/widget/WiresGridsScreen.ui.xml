@@ -1,0 +1,77 @@
+<!--
+  ~ Copyright 2015 JBoss Inc
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:bs2="urn:import:com.github.gwtbootstrap.client.ui">
+
+  <ui:style field="css">
+
+    .container {
+      overflow: hidden;
+      box-shadow: 10px 10px 10px #888888;
+      border: 1px solid #a0a0a0;
+      border-radius: 15px;
+      margin: 20px 20px 20px 20px;
+      background-color: #fefefe;
+    }
+
+    .table {
+      overflow: hidden;
+      width: 1202px;
+      height: 602px;
+      border: 1px solid #f0f0f0;
+      margin: 20px 20px 20px 20px;
+      position: relative;
+    }
+
+    .zoom {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .renderers {
+      margin-bottom: 20px;
+      margin-left: 20px;
+      margin-right: 20px;
+      text-align: center;
+    }
+
+    .merged {
+      margin-bottom: 20px;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+  </ui:style>
+
+  <g:HTMLPanel>
+    <g:VerticalPanel styleName="{css.container}">
+      <g:HorizontalPanel>
+        <g:AbsolutePanel ui:field="domElementContainer" styleName="{css.table}"/>
+      </g:HorizontalPanel>
+      <g:SimplePanel styleName="{css.zoom}">
+        <bs2:ListBox ui:field="zoom"/>
+      </g:SimplePanel>
+      <g:SimplePanel styleName="{css.renderers}">
+        <bs2:ListBox ui:field="basicRendererSelector"/>
+      </g:SimplePanel>
+      <g:SimplePanel styleName="{css.merged}">
+        <bs2:CheckBox ui:field="chkShowMerged" text="Show merged"/>
+      </g:SimplePanel>
+    </g:VerticalPanel>
+  </g:HTMLPanel>
+
+</ui:UiBinder>
