@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 JBoss Inc
+ * Copyright 2014 JBoss by Red Hat.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,4 +26,6 @@ public interface UserPreferencesService {
                                         final UserPreferencesType type );
 
     UserPreference loadUserPreferences( final UserPreference preferences );
+
+
 }

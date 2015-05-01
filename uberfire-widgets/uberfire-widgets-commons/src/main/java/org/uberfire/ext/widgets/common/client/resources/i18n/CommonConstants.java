@@ -127,4 +127,6 @@ public interface CommonConstants
 
     String Actions();
 
+    String Basic_Properties();
+
 }
