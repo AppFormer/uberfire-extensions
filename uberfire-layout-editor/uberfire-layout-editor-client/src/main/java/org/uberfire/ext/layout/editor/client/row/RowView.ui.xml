@@ -25,7 +25,7 @@
       border-radius: 4px;
       border: 1px solid #DDDDDD;
       margin: 10px;
-      background-color: WhiteSmoke  ;
+      padding: 10px;
     }
 
 

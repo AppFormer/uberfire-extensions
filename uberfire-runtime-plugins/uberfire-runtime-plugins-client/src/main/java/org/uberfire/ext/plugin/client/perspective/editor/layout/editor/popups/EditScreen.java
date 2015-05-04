@@ -34,7 +34,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Widget;
-import org.uberfire.ext.layout.editor.client.LayoutEditorPluginAPI;
+import org.uberfire.ext.layout.editor.client.LayoutEditor;
+import org.uberfire.ext.layout.editor.client.components.ModalConfigurationContext;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
 import org.uberfire.ext.plugin.client.perspective.editor.layout.editor.ScreenLayoutDragComponent;
 import org.uberfire.ext.plugin.client.resources.i18n.CommonConstants;
@@ -53,9 +54,7 @@ public class EditScreen
 
     public static String PROPERTY_EDITOR_KEY = "LayoutEditor";
 
-    private final LayoutEditorPluginAPI layoutEditorPluginAPI;
-
-    private EditorWidget parent;
+    private final ModalConfigurationContext configContext;
 
     @UiField
     TextBox key;
@@ -87,14 +86,12 @@ public class EditScreen
 
     private static Binder uiBinder = GWT.create( Binder.class );
 
-    public EditScreen( EditorWidget parent,
-                       LayoutEditorPluginAPI layoutEditorPluginAPI ) {
+    public EditScreen(ModalConfigurationContext configContext) {
         clearModal();
-        this.layoutEditorPluginAPI = layoutEditorPluginAPI;
+        this.configContext = configContext;
         setTitle( CommonConstants.INSTANCE.EditComponent() );
-        setMaxHeigth( "350px" );
-        add( uiBinder.createAndBindUi( this ) );
-        this.parent = parent;
+        setMaxHeigth("350px");
+        add(uiBinder.createAndBindUi(this));
         propertyEditor.setLastOpenAccordionGroupTitle( "Screen Editors" );
         propertyEditor.handle( generateEvent( defaultScreenProperties() ) );
         saveOriginalState();
@@ -128,7 +125,7 @@ public class EditScreen
 
     private void saveOriginalState() {
         lastParametersSaved = new HashMap<String, String>();
-        Map<String, String> layoutComponentProperties = layoutEditorPluginAPI.getLayoutComponentProperties( parent );
+        Map<String, String> layoutComponentProperties = configContext.getComponentProperties();
         for ( String key : layoutComponentProperties.keySet() ) {
             lastParametersSaved.put( key, layoutComponentProperties.get( key ) );
         }
@@ -146,9 +143,9 @@ public class EditScreen
     }
 
     private void revertChanges() {
-        layoutEditorPluginAPI.resetLayoutComponentProperties( parent );
+        configContext.resetComponentProperties();
         for ( String key : lastParametersSaved.keySet() ) {
-            layoutEditorPluginAPI.addLayoutComponentProperty( parent, key, lastParametersSaved.get( key ) );
+            configContext.setComponentProperty(key, lastParametersSaved.get(key));
         }
     }
 
@@ -163,10 +160,12 @@ public class EditScreen
     void okButton() {
         super.hide();
         revertChanges = Boolean.FALSE;
+        configContext.configurationFinished();
     }
 
     void cancelButton() {
         super.hide();
+        configContext.configurationCancelled();
     }
 
     @Override
@@ -199,7 +198,7 @@ public class EditScreen
         }
 
         //Check the Key is unique
-        Map<String, String> properties = layoutEditorPluginAPI.getLayoutComponentProperties( parent );
+        Map<String, String> properties = configContext.getComponentProperties();
         for ( String parameterKey : properties.keySet() ) {
             if ( key.getText().equals( parameterKey ) ) {
                 paramKeyControlGroup.setType( ControlGroupType.ERROR );
@@ -208,7 +207,7 @@ public class EditScreen
             }
         }
 
-        layoutEditorPluginAPI.addLayoutComponentProperty( parent, key.getText(), value.getText() );
+        configContext.setComponentProperty(key.getText(), value.getText());
         return defaultScreenProperties();
     }
 
@@ -225,7 +224,7 @@ public class EditScreen
                     public boolean remove( Object o ) {
                         if ( o instanceof PropertyEditorFieldInfo ) {
                             final PropertyEditorFieldInfo info = (PropertyEditorFieldInfo) o;
-                            layoutEditorPluginAPI.removeLayoutComponentProperty( parent, info.getLabel() );
+                            configContext.removeComponentProperty(info.getLabel());
                         }
                         return super.remove( o );
                     }
@@ -234,7 +233,7 @@ public class EditScreen
         };
 
         boolean alreadyHasScreenNameParameter = false;
-        final Map<String, String> parameters = layoutEditorPluginAPI.getLayoutComponentProperties( parent );
+        final Map<String, String> parameters = configContext.getComponentProperties();
         for ( final String key : parameters.keySet() ) {
             if ( key.equals( ScreenLayoutDragComponent.PLACE_NAME_PARAMETER ) ) {
                 alreadyHasScreenNameParameter = true;
@@ -242,11 +241,11 @@ public class EditScreen
             category.withField( new PropertyEditorFieldInfo( key,
                                                              parameters.get( key ),
                                                              PropertyEditorType.TEXT )
-                                        .withKey( parent.hashCode() + "" )
+                                        .withKey( configContext.hashCode() + key )
                                         .withRemovalSupported( !key.equals( ScreenLayoutDragComponent.PLACE_NAME_PARAMETER ) )
-                                        .withValidators( new PropertyFieldValidator() {
+                                        .withValidators(new PropertyFieldValidator() {
                                             @Override
-                                            public boolean validate( Object value ) {
+                                            public boolean validate(Object value) {
                                                 return true;
                                             }
 
@@ -254,17 +253,17 @@ public class EditScreen
                                             public String getValidatorErrorMessage() {
                                                 return "";
                                             }
-                                        } ) );
+                                        }) );
         }
 
         if ( !alreadyHasScreenNameParameter ) {
             category.withField( new PropertyEditorFieldInfo( ScreenLayoutDragComponent.PLACE_NAME_PARAMETER,
                                                              "",
                                                              PropertyEditorType.TEXT )
-                                        .withKey( parent.hashCode() + "" )
-                                        .withValidators( new PropertyFieldValidator() {
+                                        .withKey( configContext.hashCode() +  ScreenLayoutDragComponent.PLACE_NAME_PARAMETER)
+                                        .withValidators(new PropertyFieldValidator() {
                                             @Override
-                                            public boolean validate( Object value ) {
+                                            public boolean validate(Object value) {
                                                 return true;
                                             }
 
@@ -272,7 +271,7 @@ public class EditScreen
                                             public String getValidatorErrorMessage() {
                                                 return "";
                                             }
-                                        } ) );
+                                        }) );
         }
 
         return category;

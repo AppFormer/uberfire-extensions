@@ -37,7 +37,6 @@
     <b:FluidRow>
       <b:Column size="9">
         <g:FlowPanel styleName="{style.container}">
-          <b:Label text="Container"/>
           <g:FlowPanel ui:field="container" />
         </g:FlowPanel>
       </b:Column>

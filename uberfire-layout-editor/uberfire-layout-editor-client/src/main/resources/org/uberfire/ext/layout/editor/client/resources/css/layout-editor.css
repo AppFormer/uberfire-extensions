@@ -1,5 +1,11 @@
 .dropBorder {
-    border-style: solid;
-    border-color: red;
-    border-width: 1px;
+    border: 1px solid red;
+    margin: 10px;
+    padding: 10px;
+}
+
+.dropInactive {
+    border: 1px solid #DDDDDD;
+    margin: 10px;
+    padding: 10px;
 }

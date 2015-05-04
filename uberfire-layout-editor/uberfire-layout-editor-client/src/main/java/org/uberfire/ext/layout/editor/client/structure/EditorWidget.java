@@ -1,7 +1,7 @@
 package org.uberfire.ext.layout.editor.client.structure;
 
 import com.google.gwt.user.client.ui.FlowPanel;
-import org.uberfire.ext.layout.editor.client.util.LayoutDragComponent;
+import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
 
 public interface EditorWidget {
 

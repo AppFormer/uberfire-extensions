@@ -8,4 +8,6 @@ public interface LayoutEditorCss extends CssResource {
     @ClassName( "dropBorder" )
     String dropBorder();
 
+    @ClassName( "dropInactive" )
+    String dropInactive();
 }
