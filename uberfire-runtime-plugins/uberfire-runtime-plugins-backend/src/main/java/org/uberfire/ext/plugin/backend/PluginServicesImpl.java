@@ -108,7 +108,7 @@ public class PluginServicesImpl implements PluginServices {
     @Inject
     private User identity;
 
-    private Gson gson;
+    protected Gson gson;
 
     private FileSystem fileSystem;
     private Path root;
@@ -332,52 +332,10 @@ public class PluginServicesImpl implements PluginServices {
     private void createRegistry(final PluginSimpleContent plugin) {
         final Path path = getPluginPath(plugin.getName());
 
-        final StringBuilder sb = new StringBuilder();
-
-        if (plugin.getCodeMap().containsKey(CodeType.MAIN)) {
-            sb.append(plugin.getCodeMap().get(CodeType.MAIN));
-        }
-
-        if (plugin.getType().equals(PluginType.SCREEN)) {
-            sb.append("$registerPlugin({");
-        } else if (plugin.getType().equals(PluginType.SPLASH)) {
-            sb.append("$registerSplashScreen({");
-        } else if (plugin.getType().equals(PluginType.EDITOR)) {
-            sb.append("$registerEditor({");
-        } else if (plugin.getType().equals(PluginType.PERSPECTIVE)) {
-            sb.append("$registerPerspective({");
-        }
-
-        sb.append("id:").append('"').append(plugin.getName()).append('"').append(",");
-
-        if (plugin.getCodeMap().size() > 1) {
-            for (final Map.Entry<CodeType, String> entry : plugin.getCodeMap().entrySet()) {
-                if (!entry.getKey().equals(CodeType.MAIN)) {
-                    sb.append(entry.getKey().toString().toLowerCase()).append(": ");
-                    sb.append(entry.getValue()).append(",");
-                }
-            }
-        } else {
-            sb.append(",");
-        }
-
-        if (plugin.getFrameworks() != null && !plugin.getFrameworks().isEmpty()) {
-            final Framework fm = plugin.getFrameworks().iterator().next();
-            sb.append("type: ").append('"').append(fm.getType()).append('"').append(',');
-        }
-
-        if (!plugin.getType().equals(PluginType.PERSPECTIVE)) {
-            sb.append("template: ");
-
-            gson.toJson(plugin.getTemplate(), sb);
-        } else {
-            sb.append("view: {").append(plugin.getTemplate()).append("}");
-        }
-
-        sb.append("});");
+        final String registry = new JSRegistry().convertToJSRegistry( plugin );
 
         ioService.write(path.resolve(plugin.getName() + ".registry.js"),
-                        sb.toString());
+                        registry);
     }
 
     private void saveCodeMap(final String pluginName,
