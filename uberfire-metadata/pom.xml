@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.uberfire</groupId>
     <artifactId>uberfire-extensions-deps</artifactId>
-    <version>0.5.4.Final</version>
+    <version>0.5.5-SNAPSHOT</version>
     <relativePath>../uberfire-extensions-deps/pom.xml</relativePath>
   </parent>
 
