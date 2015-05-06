@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.uberfire.ext.wires.bpmn.backend.todo;
+package org.uberfire.ext.widgets.common.server.exceptions;
 
 import org.jboss.errai.config.rebind.EnvUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * When Bpmn moves to KIE-WB this class can be removed.
- */
 public class ExceptionUtilities {
 
     private static final Logger logger = LoggerFactory.getLogger( ExceptionUtilities.class );

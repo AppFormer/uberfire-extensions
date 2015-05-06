@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.uberfire.ext.wires.bpmn.backend.todo;
+package org.uberfire.ext.widgets.common.server.exceptions;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 
-/**
- * When Bpmn moves to KIE-WB this class can be removed.
- */
 @Portable
 public class GenericPortableException extends RuntimeException {
 

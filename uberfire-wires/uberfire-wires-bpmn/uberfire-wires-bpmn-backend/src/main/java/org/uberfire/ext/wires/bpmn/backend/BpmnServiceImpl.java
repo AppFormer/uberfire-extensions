@@ -32,13 +32,13 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.ext.editor.commons.service.CopyService;
 import org.uberfire.ext.editor.commons.service.DeleteService;
 import org.uberfire.ext.editor.commons.service.RenameService;
+import org.uberfire.ext.widgets.common.server.exceptions.ExceptionUtilities;
 import org.uberfire.ext.wires.bpmn.api.model.impl.BpmnEditorContent;
 import org.uberfire.ext.wires.bpmn.api.model.impl.nodes.ProcessNode;
 import org.uberfire.ext.wires.bpmn.api.service.BpmnService;
 import org.uberfire.ext.wires.bpmn.api.service.todo.Metadata;
 import org.uberfire.ext.wires.bpmn.api.type.BpmnResourceTypeDefinition;
 import org.uberfire.ext.wires.bpmn.backend.todo.CommentedOptionFactory;
-import org.uberfire.ext.wires.bpmn.backend.todo.ExceptionUtilities;
 import org.uberfire.ext.wires.bpmn.backend.todo.MetadataFactory;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.IOException;
@@ -96,7 +96,7 @@ public class BpmnServiceImpl implements BpmnService {
             return newPath;
 
         } catch ( Exception e ) {
-            throw ExceptionUtilities.handleException( e );
+            throw ExceptionUtilities.handleException(e);
         }
     }
 
