@@ -1,11 +1,33 @@
 .dropBorder {
-    border: 1px solid red;
+    border: 1px solid dodgerblue;
+    margin: 10px;
+    padding: 10px;
+    height: 50px;
+}
+
+.dropInactive {
+    border: 1px solid lightgray;
+    margin: 10px;
+    padding: 10px;
+    height: 50px;
+}
+
+.rowDragOver {
+    border: 1px solid dodgerblue;
     margin: 10px;
     padding: 10px;
 }
 
-.dropInactive {
-    border: 1px solid #DDDDDD;
+.rowDragOut {
+    border: 1px solid lightgray;
     margin: 10px;
     padding: 10px;
+}
+
+.componentDragOver {
+    border: 1px solid dodgerblue;
+}
+
+.componentDragOut {
+    border: 0px;
 }

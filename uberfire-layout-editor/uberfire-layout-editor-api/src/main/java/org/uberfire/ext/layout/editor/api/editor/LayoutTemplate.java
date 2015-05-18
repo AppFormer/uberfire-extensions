@@ -8,7 +8,9 @@ import java.util.Map;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class LayoutTemplate {
+public final class LayoutTemplate {
+
+    public static final int LAYOUT_VERSION = 1;
 
     private String name;
 
@@ -27,6 +29,10 @@ public class LayoutTemplate {
     }
 
     public LayoutTemplate() {
+    }
+
+    public static int getLayoutVersion() {
+        return LAYOUT_VERSION;
     }
 
     public void addRow( LayoutRow layoutRow) {

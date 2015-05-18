@@ -113,11 +113,6 @@ public class LayoutEditorView extends Composite
     }
 
     @Override
-    public int getCurrentModelHash() {
-        return layoutEditorWidget.toLayoutTemplate().hashCode();
-    }
-
-    @Override
     public void loadDefaultLayout(String layoutName) {
         setupContent(LayoutTemplate.defaultLayout(layoutName));
     }

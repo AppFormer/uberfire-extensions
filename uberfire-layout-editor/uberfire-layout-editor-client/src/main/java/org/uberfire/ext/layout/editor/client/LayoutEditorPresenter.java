@@ -48,8 +48,6 @@ public class LayoutEditorPresenter {
 
         LayoutTemplate getModel();
 
-        int getCurrentModelHash();
-
         void loadDefaultLayout(String layoutName);
 
         void addLayoutProperty( String key,
@@ -103,10 +101,6 @@ public class LayoutEditorPresenter {
 
     public String getLayoutProperty(String key) {
         return view.getLayoutProperty(key);
-    }
-
-    public int getCurrentModelHash() {
-        return view.getCurrentModelHash();
     }
 }
 

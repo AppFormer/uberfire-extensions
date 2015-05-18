@@ -30,7 +30,6 @@ public class DropColumnPanel extends FlowPanel {
         label.setText("Column");
         this.add(label);
 
-        setHeight("50px");
         addCSSClass(WebAppResource.INSTANCE.CSS().dropInactive());
         addDragOverHandler( new DragOverHandler() {
             @Override

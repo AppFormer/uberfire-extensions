@@ -26,8 +26,6 @@ public class DropRowPanel extends FlowPanel {
         label.setText("New row ...");
         this.add(label);
 
-
-        setHeight("50px");
         addCSSClass(WebAppResource.INSTANCE.CSS().dropInactive());
         addDragOverHandler( new DragOverHandler() {
             @Override

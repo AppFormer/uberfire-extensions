@@ -6,7 +6,6 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Column;
 import com.github.gwtbootstrap.client.ui.FluidContainer;
 import com.github.gwtbootstrap.client.ui.FluidRow;
-import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
@@ -27,6 +26,7 @@ import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
 import org.uberfire.ext.layout.editor.api.editor.LayoutRow;
 import org.uberfire.ext.layout.editor.client.components.LayoutComponentView;
 import org.uberfire.ext.layout.editor.client.dnd.DropColumnPanel;
+import org.uberfire.ext.layout.editor.client.resources.WebAppResource;
 import org.uberfire.ext.layout.editor.client.structure.ColumnEditorWidget;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
 import org.uberfire.ext.layout.editor.client.structure.LayoutEditorWidget;
@@ -181,14 +181,16 @@ public class RowView extends Composite {
         row.getWidget().addDomHandler(new MouseOverHandler() {
             @Override public void onMouseOver(MouseOverEvent mouseOverEvent) {
                 header.setVisible(true);
-                row.getWidget().getElement().getStyle().setProperty("border", "1px solid #57CFF4");
+                row.getWidget().getElement().removeClassName(WebAppResource.INSTANCE.CSS().rowDragOut());
+                row.getWidget().getElement().addClassName(WebAppResource.INSTANCE.CSS().rowDragOver());
             }
         }, MouseOverEvent.getType());
 
         row.getWidget().addDomHandler(new MouseOutHandler() {
             @Override public void onMouseOut(MouseOutEvent mouseOutEvent) {
                 header.setVisible(false);
-                row.getWidget().getElement().getStyle().setProperty("border", "0px");
+                row.getWidget().getElement().removeClassName(WebAppResource.INSTANCE.CSS().rowDragOver());
+                row.getWidget().getElement().addClassName(WebAppResource.INSTANCE.CSS().rowDragOut());
             }
         }, MouseOutEvent.getType());
 

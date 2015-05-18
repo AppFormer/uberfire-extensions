@@ -132,9 +132,4 @@ public class LayoutEditorPluginImpl implements LayoutEditorPlugin {
     private LayoutEditorModel getLayoutContent(Path currentPath, String model) {
         return new LayoutEditorModel(pluginName, pluginType, currentPath, model);
     }
-
-    @Override
-    public int getCurrentModelHash() {
-        return layoutEditorPresenter.getCurrentModelHash();
-    }
 }

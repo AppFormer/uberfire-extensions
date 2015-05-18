@@ -43,18 +43,25 @@ public class ScreenLayoutDragComponent implements PerspectiveEditorDragComponent
     @Override
     public IsWidget getPreviewWidget(RenderingContext ctx) {
         Map<String, String> properties = ctx.getComponent().getProperties();
-        String placeName = properties.get( PLACE_NAME_PARAMETER );
-        if ( placeName == null ) return null;
-        return new Label(placeName);
+        String placeName = properties.get(PLACE_NAME_PARAMETER);
+        if (placeName == null) return null;
+
+        FlowPanel panel = new FlowPanel();
+        panel.setWidth("95%");
+        panel.setHeight(500 + "px");
+        placeManager.goTo(new DefaultPlaceRequest(placeName, properties), panel);
+        return panel;
     }
 
     @Override
     public IsWidget getShowWidget(RenderingContext ctx) {
         Map<String, String> properties = ctx.getComponent().getProperties();
-        String placeName = properties.get( PLACE_NAME_PARAMETER );
-        if ( placeName == null ) return null;
+        String placeName = properties.get(PLACE_NAME_PARAMETER);
+        if (placeName == null) return null;
 
         FlowPanel panel = new FlowPanel();
+        panel.setWidth("95%");
+        panel.setHeight(500 + "px");
         placeManager.goTo(new DefaultPlaceRequest(placeName, properties), panel);
         return panel;
     }

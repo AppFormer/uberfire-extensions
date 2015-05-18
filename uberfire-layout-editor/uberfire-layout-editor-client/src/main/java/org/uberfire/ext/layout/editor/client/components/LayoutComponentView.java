@@ -14,6 +14,7 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -56,10 +57,10 @@ public class LayoutComponentView extends Composite {
         initWidget( uiBinder.createAndBindUi( this ) );
         this.type = type;
         this.parent = parent;
-        this.newComponent = newComponent;
         this.componentEditorWidget = new ComponentEditorWidget( parent, fluidContainer, type );
-
         update();
+
+        this.newComponent = newComponent;
         if (newComponent && (type instanceof HasConfiguration)) {
             showConfigurationScreen();
         }
@@ -87,6 +88,7 @@ public class LayoutComponentView extends Composite {
     }
 
     public void update() {
+        newComponent = false;
         componentEditorWidget.getWidget().clear();
         componentEditorWidget.getWidget().add(generateMainRow());
     }
@@ -107,14 +109,16 @@ public class LayoutComponentView extends Composite {
         row.addDomHandler(new MouseOverHandler() {
             @Override public void onMouseOver(MouseOverEvent mouseOverEvent) {
                 header.setVisible(true);
-                parent.getWidget().getElement().getStyle().setProperty("border", "1px solid #6DB4E1");
+                parent.getWidget().getElement().removeClassName(WebAppResource.INSTANCE.CSS().componentDragOut());
+                parent.getWidget().getElement().addClassName(WebAppResource.INSTANCE.CSS().componentDragOver());
             }
         }, MouseOverEvent.getType());
 
         row.addDomHandler(new MouseOutHandler() {
             @Override public void onMouseOut(MouseOutEvent mouseOutEvent) {
                 header.setVisible(false);
-                parent.getWidget().getElement().getStyle().setProperty("border", "0px");
+                parent.getWidget().getElement().removeClassName(WebAppResource.INSTANCE.CSS().componentDragOver());
+                parent.getWidget().getElement().addClassName(WebAppResource.INSTANCE.CSS().componentDragOut());
             }
         }, MouseOutEvent.getType());
 
@@ -124,7 +128,7 @@ public class LayoutComponentView extends Composite {
     private Column generateLayoutComponentPreview() {
         LayoutEditorWidget layoutEditorWidget = getLayoutEditorWidget();
         LayoutComponent layoutComponent = layoutEditorWidget.getLayoutComponent(componentEditorWidget);
-        RenderingContext renderingContext = new RenderingContext(layoutComponent, fluidContainer);
+        RenderingContext renderingContext = new RenderingContext(layoutComponent, parent.getWidget());
         IsWidget previewWidget = type.getPreviewWidget(renderingContext);
 
         Column buttonColumn = new Column(12);
@@ -137,7 +141,7 @@ public class LayoutComponentView extends Composite {
 
     private Column generateHeaderRow() {
         final Column header = new Column(12);
-        header.getElement().getStyle().setProperty( "textAlign", "right" );
+        header.getElement().getStyle().setProperty("textAlign", "right");
         if ( type instanceof HasConfiguration ) {
             header.add(generateConfigureButton());
         }
@@ -146,7 +150,7 @@ public class LayoutComponentView extends Composite {
     }
 
     private Button generateConfigureButton() {
-        Button remove = GWT.create( Button.class );
+        Button remove = GWT.create(Button.class);
         remove.setSize( ButtonSize.MINI );
         remove.setType(ButtonType.PRIMARY);
         remove.setIcon(IconType.EDIT);
@@ -178,7 +182,7 @@ public class LayoutComponentView extends Composite {
 
     private Button generateRemoveButton() {
         Button remove = GWT.create( Button.class );
-        remove.setSize( ButtonSize.MINI );
+        remove.setSize(ButtonSize.MINI);
         remove.setType(ButtonType.DANGER);
         remove.setIcon(IconType.REMOVE);
         remove.getElement().getStyle().setProperty("marginRight", "3px");
@@ -193,6 +197,9 @@ public class LayoutComponentView extends Composite {
 
     private void removeThisWidgetFromParent() {
         parent.getWidget().remove(this);
+        parent.getWidget().getElement().getStyle().clearWidth();
+        parent.getWidget().getElement().getStyle().clearHeight();
+        parent.getWidget().getElement().removeClassName(WebAppResource.INSTANCE.CSS().componentDragOver());
         componentEditorWidget.removeFromParent();
     }
 

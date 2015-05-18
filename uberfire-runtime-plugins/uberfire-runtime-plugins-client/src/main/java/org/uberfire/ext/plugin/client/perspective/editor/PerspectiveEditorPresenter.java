@@ -198,7 +198,7 @@ public class PerspectiveEditorPresenter extends BaseEditor {
     }
 
     public int getCurrentModelHash() {
-        return layoutEditorPlugin.getCurrentModelHash();
+        return layoutEditorPlugin.getLayout().hashCode();
     }
 
     protected void onPlugInRenamed( @Observes final PluginRenamed pluginRenamed ) {

@@ -26,6 +26,4 @@ public interface LayoutEditorPlugin extends LayoutEditor {
     void load(PluginType pluginType, Path currentPath, ParameterizedCommand<LayoutEditorModel> loadCallBack);
 
     void save(Path path, RemoteCallback<Path> saveSuccessCallback);
-
-    int getCurrentModelHash();
 }
