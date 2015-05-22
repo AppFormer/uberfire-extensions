@@ -26,7 +26,6 @@ public class LayoutEditorWidget implements EditorWidget {
     private String name = "";
 
     public LayoutEditorWidget() {
-
     }
 
     public void setup( FlowPanel container,
@@ -40,10 +39,17 @@ public class LayoutEditorWidget implements EditorWidget {
         }
     }
 
+    @Override
+    public EditorWidget getParent() {
+        return null;
+    }
+
+    @Override
     public FlowPanel getWidget() {
         return container;
     }
 
+    @Override
     public void addChild( EditorWidget child ) {
         rowEditors.add( child );
     }

@@ -18,6 +18,12 @@ public class ComponentEditorWidget implements EditorWidget {
         parent.addChild( this );
     }
 
+    @Override
+    public EditorWidget getParent() {
+        return parent;
+    }
+
+    @Override
     public FlowPanel getWidget() {
         return container;
     }

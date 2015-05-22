@@ -25,6 +25,10 @@ public class ColumnEditorWidget implements EditorWidget {
         row.addChild( this );
     }
 
+    public EditorWidget getParent() {
+        return parent;
+    }
+
     public FlowPanel getWidget() {
         return container;
     }

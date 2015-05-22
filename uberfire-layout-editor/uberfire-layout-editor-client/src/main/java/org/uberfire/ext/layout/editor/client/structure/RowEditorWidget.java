@@ -32,6 +32,10 @@ public class RowEditorWidget implements EditorWidget {
         parent.addChild( this );
     }
 
+    public EditorWidget getParent() {
+        return parent;
+    }
+
     public FlowPanel getWidget() {
         return container;
     }

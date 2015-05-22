@@ -14,7 +14,6 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -22,14 +21,12 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import org.jboss.errai.ioc.client.container.IOC;
-import org.jboss.errai.ioc.client.container.IOCBeanDef;
-import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
 import org.uberfire.ext.layout.editor.client.dnd.DropColumnPanel;
 import org.uberfire.ext.layout.editor.client.resources.WebAppResource;
 import org.uberfire.ext.layout.editor.client.structure.ColumnEditorWidget;
 import org.uberfire.ext.layout.editor.client.structure.ComponentEditorWidget;
+import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
 import org.uberfire.ext.layout.editor.client.structure.LayoutEditorWidget;
 
 public class LayoutComponentView extends Composite {
@@ -58,12 +55,9 @@ public class LayoutComponentView extends Composite {
         this.type = type;
         this.parent = parent;
         this.componentEditorWidget = new ComponentEditorWidget( parent, fluidContainer, type );
-        update();
-
         this.newComponent = newComponent;
-        if (newComponent && (type instanceof HasConfiguration)) {
-            showConfigurationScreen();
-        }
+
+        init();
     }
 
     public LayoutComponentView( ColumnEditorWidget parent,
@@ -76,7 +70,7 @@ public class LayoutComponentView extends Composite {
 
         LayoutEditorWidget layoutEditorWidget = getLayoutEditorWidget();
         layoutEditorWidget.registerLayoutComponent(this.componentEditorWidget, component);
-        update();
+        init();
     }
 
     public ComponentEditorWidget getEditorWidget() {
@@ -87,10 +81,19 @@ public class LayoutComponentView extends Composite {
         return newComponent;
     }
 
+    public void init() {
+        if (!newComponent) {
+            componentEditorWidget.getWidget().clear();
+            componentEditorWidget.getWidget().add(generateMainRow());
+        }
+        else if (type instanceof HasConfiguration) {
+            showConfigurationScreen();
+        }
+    }
+
     public void update() {
         newComponent = false;
-        componentEditorWidget.getWidget().clear();
-        componentEditorWidget.getWidget().add(generateMainRow());
+        init();
     }
 
     public void remove() {
@@ -208,9 +211,14 @@ public class LayoutComponentView extends Composite {
     }
 
     protected LayoutEditorWidget getLayoutEditorWidget() {
-        SyncBeanManager beanManager = IOC.getBeanManager();
-        IOCBeanDef<LayoutEditorWidget> layoutEditorUIIOCBeanDef = beanManager.lookupBean( LayoutEditorWidget.class );
-        return layoutEditorUIIOCBeanDef.getInstance();
+        EditorWidget target = parent;
+        while (target != null) {
+            if (target instanceof LayoutEditorWidget) {
+                return (LayoutEditorWidget) target;
+            }
+            target = target.getParent();
+        }
+        GWT.log("LayoutEditorWidget not found!");
+        return null;
     }
-
 }
