@@ -11,7 +11,7 @@
 
   <artifactId>uberfire-wires-core-trees</artifactId>
 
-  <name>Uberfire Wires :: Trees</name>
+  <name>Uberfire Wires :: Core Trees</name>
   <description>Wires Trees support</description>
 
   <dependencies>

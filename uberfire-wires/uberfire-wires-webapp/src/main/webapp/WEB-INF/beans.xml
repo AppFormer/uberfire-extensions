@@ -3,6 +3,7 @@
   <scan>
     <exclude name="org.uberfire.ext.wires.client.**"/>
     <exclude name="org.uberfire.ext.wires.core.trees.client.**"/>
+    <exclude name="org.uberfire.ext.wires.core.grids.client.**"/>
     <exclude name="org.uberfire.ext.apps.client.**"/>
     <exclude name="org.uberfire.ext.editor.commons.client.**"/>
     <exclude name="org.uberfire.ext.plugin.client.**"/>
