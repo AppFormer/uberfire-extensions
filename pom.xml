@@ -30,7 +30,7 @@
 
   <groupId>org.uberfire</groupId>
   <artifactId>uberfire-extensions</artifactId>
-  <version>0.5.7-SNAPSHOT</version>
+  <version>0.5.8-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Extensions to UberFire</name>
