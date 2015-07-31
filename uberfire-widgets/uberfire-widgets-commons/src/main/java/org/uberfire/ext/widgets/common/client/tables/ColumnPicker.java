@@ -21,6 +21,7 @@ import com.github.gwtbootstrap.client.ui.CheckBox;
 import com.github.gwtbootstrap.client.ui.DataGrid;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -77,6 +78,11 @@ public class ColumnPicker<T> {
 
     public void removeColumn(ColumnMeta<T> columnMeta){
         columnMetaList.remove(columnMeta);
+        int count = dataGrid.getColumnCount();
+        for (int i = 0; i < count; i++) {
+            dataGrid.removeColumn(0);
+        }
+
         sortAndAddColumns(columnMetaList);
         adjustColumnWidths();
     }
