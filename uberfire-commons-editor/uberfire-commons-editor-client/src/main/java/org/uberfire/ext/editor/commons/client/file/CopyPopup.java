@@ -28,7 +28,25 @@ public class CopyPopup implements CopyPopupView.Presenter {
     private final Validator validator;
     private final CommandWithFileNameAndCommitMessage command;
 
-    public CopyPopup( Path path, CommandWithFileNameAndCommitMessage command, CopyPopupView view ) {
+    public CopyPopup( final Path path,
+                      final CommandWithFileNameAndCommitMessage command ) {
+        this( path,
+              command,
+              new CopyPopupViewImpl() );
+    }
+
+    public CopyPopup( final Path path,
+                      final Validator validator,
+                      final CommandWithFileNameAndCommitMessage command ) {
+        this( path,
+              validator,
+              command,
+              new CopyPopupViewImpl() );
+    }
+
+    public CopyPopup( final Path path,
+                      final CommandWithFileNameAndCommitMessage command,
+                      final CopyPopupView view ) {
         this( path,
               new Validator() {
                   @Override
@@ -37,10 +55,14 @@ public class CopyPopup implements CopyPopupView.Presenter {
                       callback.onSuccess();
                   }
               },
-              command, view );
+              command,
+              view );
     }
 
-    public CopyPopup( Path path, Validator validator, CommandWithFileNameAndCommitMessage command, CopyPopupView view ) {
+    public CopyPopup( final Path path,
+                      final Validator validator,
+                      final CommandWithFileNameAndCommitMessage command,
+                      final CopyPopupView view ) {
         this.validator = checkNotNull( "validator",
                                        validator );
         this.path = checkNotNull( "path",
