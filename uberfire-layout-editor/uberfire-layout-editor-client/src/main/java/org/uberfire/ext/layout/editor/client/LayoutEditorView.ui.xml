@@ -43,7 +43,7 @@
             </b:Column>
             <b:Column size="3">
                 <g:FlowPanel styleName="{style.component}">
-                    <b:Accordion styleName="{style.container}">
+                    <b:Accordion styleName="{style.container}" ui:field="componentsPalette">
 
                         <b:AccordionGroup ui:field="gridSystem" defaultOpen="true" heading="{i18n.GridSystem}"
                                           icon="TH"/>

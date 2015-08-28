@@ -22,9 +22,9 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.ui.Widget;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
+import org.uberfire.ext.layout.editor.client.components.LayoutDragComponentGroup;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
 import org.uberfire.ext.layout.editor.client.components.GridLayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
@@ -65,6 +65,14 @@ public class LayoutEditorPresenter {
 
         void removeLayoutComponentProperty( EditorWidget component,
                                             String key );
+
+        void addDraggableComponentGroup( LayoutDragComponentGroup group );
+
+        void addDraggableComponentToGroup( String groupId, String componentId, LayoutDragComponent component );
+
+        void removeDraggableGroup( String id );
+
+        void removeDraggableComponentFromGroup( String groupId, String componentId );
     }
 
     @Inject
@@ -92,15 +100,31 @@ public class LayoutEditorPresenter {
     }
 
     public void loadDefaultLayout( String layoutName ) {
-        view.loadDefaultLayout(layoutName);
+        view.loadDefaultLayout( layoutName );
     }
 
     public void addLayoutProperty(String key, String value) {
-        view.addLayoutProperty(key, value);
+        view.addLayoutProperty( key, value );
     }
 
     public String getLayoutProperty(String key) {
         return view.getLayoutProperty(key);
+    }
+
+    public void addDraggableComponentGroup( LayoutDragComponentGroup group ) {
+        view.addDraggableComponentGroup( group );
+    }
+
+    public void addDraggableComponentToGroup( String groupId, String componentId, LayoutDragComponent component ) {
+        view.addDraggableComponentToGroup( groupId, componentId, component );
+    }
+
+    public void removeDraggableGroup( String id ) {
+        view.removeDraggableGroup( id );
+    }
+
+    public void removeDraggableComponentFromGroup( String groupId, String componentId ) {
+        view.removeDraggableComponentFromGroup( groupId, componentId );
     }
 }
 
