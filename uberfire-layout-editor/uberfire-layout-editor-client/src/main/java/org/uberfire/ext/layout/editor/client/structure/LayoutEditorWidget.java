@@ -50,6 +50,11 @@ public class LayoutEditorWidget implements EditorWidget {
     }
 
     @Override
+    public List<EditorWidget> getChildren() {
+        return rowEditors;
+    }
+
+    @Override
     public void addChild( EditorWidget child ) {
         rowEditors.add( child );
     }
