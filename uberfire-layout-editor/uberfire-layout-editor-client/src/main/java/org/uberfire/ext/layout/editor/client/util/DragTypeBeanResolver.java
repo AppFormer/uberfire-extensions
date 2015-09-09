@@ -9,11 +9,9 @@ import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
 
 public class DragTypeBeanResolver {
 
-    private Collection<IOCBeanDef<LayoutDragComponent>> iocBeanDefs;
-
     public LayoutDragComponent lookupDragTypeBean( String dragTypeClassName ) {
         SyncBeanManagerImpl beanManager = (SyncBeanManagerImpl) IOC.getBeanManager();
-        iocBeanDefs = beanManager.lookupBeans( LayoutDragComponent.class );
+        Collection<IOCBeanDef<LayoutDragComponent>> iocBeanDefs = beanManager.lookupBeans( LayoutDragComponent.class );
 
         for ( IOCBeanDef<LayoutDragComponent> iocBeanDef : iocBeanDefs ) {
             final LayoutDragComponent instance = iocBeanDef.getInstance();

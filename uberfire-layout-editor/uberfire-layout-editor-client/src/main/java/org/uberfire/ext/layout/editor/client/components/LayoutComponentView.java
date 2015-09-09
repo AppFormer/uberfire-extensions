@@ -1,3 +1,18 @@
+/*
+* Copyright 2015 JBoss Inc
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*       http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.uberfire.ext.layout.editor.client.components;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -117,13 +132,13 @@ public class LayoutComponentView extends Composite {
             }
         }, MouseOverEvent.getType());
 
-        row.addDomHandler(new MouseOutHandler() {
-            @Override public void onMouseOut(MouseOutEvent mouseOutEvent) {
-                header.setVisible(false);
-                parent.getWidget().getElement().removeClassName(WebAppResource.INSTANCE.CSS().componentDragOver());
-                parent.getWidget().getElement().addClassName(WebAppResource.INSTANCE.CSS().componentDragOut());
+        row.addDomHandler( new MouseOutHandler() {
+            @Override public void onMouseOut( MouseOutEvent mouseOutEvent ) {
+                header.setVisible( false );
+                parent.getWidget().getElement().removeClassName( WebAppResource.INSTANCE.CSS().componentDragOver() );
+                parent.getWidget().getElement().addClassName( WebAppResource.INSTANCE.CSS().componentDragOut() );
             }
-        }, MouseOutEvent.getType());
+        }, MouseOutEvent.getType() );
 
         return row;
     }
@@ -135,7 +150,7 @@ public class LayoutComponentView extends Composite {
         IsWidget previewWidget = type.getPreviewWidget(renderingContext);
 
         Column buttonColumn = new Column(12);
-        buttonColumn.getElement().getStyle().setProperty("textAlign", "left");
+        buttonColumn.getElement().getStyle().setProperty( "textAlign", "left" );
         if (previewWidget != null) {
             buttonColumn.add(previewWidget);
         }
@@ -148,12 +163,12 @@ public class LayoutComponentView extends Composite {
         if ( type instanceof HasConfiguration ) {
             header.add(generateConfigureButton());
         }
-        header.add(generateRemoveButton());
+        header.add( generateRemoveButton() );
         return header;
     }
 
     private Button generateConfigureButton() {
-        Button remove = GWT.create(Button.class);
+        Button remove = GWT.create( Button.class );
         remove.setSize( ButtonSize.MINI );
         remove.setType(ButtonType.PRIMARY);
         remove.setIcon(IconType.EDIT);
@@ -185,10 +200,10 @@ public class LayoutComponentView extends Composite {
 
     private Button generateRemoveButton() {
         Button remove = GWT.create( Button.class );
-        remove.setSize(ButtonSize.MINI);
-        remove.setType(ButtonType.DANGER);
-        remove.setIcon(IconType.REMOVE);
-        remove.getElement().getStyle().setProperty("marginRight", "3px");
+        remove.setSize( ButtonSize.MINI );
+        remove.setType( ButtonType.DANGER );
+        remove.setIcon( IconType.REMOVE );
+        remove.getElement().getStyle().setProperty( "marginRight", "3px" );
         remove.addClickHandler( new ClickHandler() {
             @Override
             public void onClick( ClickEvent event ) {
@@ -199,11 +214,14 @@ public class LayoutComponentView extends Composite {
     }
 
     private void removeThisWidgetFromParent() {
-        parent.getWidget().remove(this);
+        parent.getWidget().remove( this );
         parent.getWidget().getElement().getStyle().clearWidth();
         parent.getWidget().getElement().getStyle().clearHeight();
-        parent.getWidget().getElement().removeClassName(WebAppResource.INSTANCE.CSS().componentDragOver());
+        parent.getWidget().getElement().removeClassName( WebAppResource.INSTANCE.CSS().componentDragOver() );
         componentEditorWidget.removeFromParent();
+        if (type instanceof HasOnRemoveNotification) {
+            ((HasOnRemoveNotification) type).onRemoveComponent();
+        }
     }
 
     private void addDropColumnPanel() {

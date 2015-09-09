@@ -34,6 +34,11 @@ public class ColumnEditorWidget implements EditorWidget {
     }
 
     @Override
+    public List<EditorWidget> getChildren() {
+        return childs;
+    }
+
+    @Override
     public void addChild( EditorWidget editorWidget ) {
         childs.add( editorWidget );
     }

@@ -1,5 +1,7 @@
 package org.uberfire.ext.layout.editor.client.structure;
 
+import java.util.List;
+
 import com.google.gwt.user.client.ui.FlowPanel;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
 
@@ -30,6 +32,11 @@ public class ComponentEditorWidget implements EditorWidget {
 
     public void removeFromParent() {
         parent.removeChild( this );
+    }
+
+    @Override
+    public List<EditorWidget> getChildren() {
+        return null;
     }
 
     @Override

@@ -10,6 +10,8 @@ import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
+import org.uberfire.ext.layout.editor.client.components.HasDragAndDropSettings;
+import org.uberfire.ext.layout.editor.client.components.HasOnDropNotification;
 import org.uberfire.ext.layout.editor.client.components.LayoutComponentView;
 import org.uberfire.ext.layout.editor.client.resources.WebAppResource;
 import org.uberfire.ext.layout.editor.client.row.RowView;
@@ -71,6 +73,16 @@ public class DropColumnPanel extends FlowPanel {
         String dragTypeClassName = event.getData( LayoutDragComponent.class.toString() );
         LayoutDragComponent layoutDragComponent = getLayoutDragComponent( dragTypeClassName );
         if ( layoutDragComponent != null ) {
+            if (layoutDragComponent instanceof HasDragAndDropSettings ) {
+                HasDragAndDropSettings sType = ( HasDragAndDropSettings ) layoutDragComponent;
+                for ( String key : sType.getSettingsKeys() ) {
+                    String value = event.getData( key );
+                    if ( value != null ) sType.setSettingValue( key, value );
+                }
+            }
+            if (layoutDragComponent instanceof HasOnDropNotification ) {
+                ((HasOnDropNotification) layoutDragComponent).onDropComponent();
+            }
             handleLayoutDrop( layoutDragComponent );
         }
     }

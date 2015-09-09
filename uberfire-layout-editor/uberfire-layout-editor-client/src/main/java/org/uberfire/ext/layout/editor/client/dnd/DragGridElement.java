@@ -9,6 +9,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.uberfire.ext.layout.editor.client.components.HasDragAndDropSettings;
 import org.uberfire.ext.layout.editor.client.resources.i18n.CommonConstants;
 import org.uberfire.ext.layout.editor.client.components.GridLayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.components.InternalDragComponent;
@@ -50,6 +51,13 @@ public class DragGridElement extends Composite {
             event.setData(InternalDragComponent.INTERNAL_DRAG_COMPONENT, ((GridLayoutDragComponent) type).label());
         } else {
             event.setData( LayoutDragComponent.class.toString(), type.getClass().getName() );
+        }
+        if (type instanceof HasDragAndDropSettings ) {
+            HasDragAndDropSettings sType = ( HasDragAndDropSettings ) type;
+            for ( String key : sType.getSettingsKeys() ) {
+                String value = sType.getSettingValue( key );
+                if ( value != null ) event.setData( key, value );
+            }
         }
 
         event.getDataTransfer().setDragImage( move.getElement(), 10, 10 );
