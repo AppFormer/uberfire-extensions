@@ -112,8 +112,7 @@ public class DocksExpandedBar
     }
 
     private void createTitle( String titleString ) {
-        title = new Heading( HeadingSize.H5 );
-        title.setText( titleString );
+        title = new Heading( HeadingSize.H3, titleString );
     }
 
     private void createButtons( final String identifier,
@@ -121,6 +120,7 @@ public class DocksExpandedBar
 
         collapse = GWT.create( Button.class );
         collapse.setSize( ButtonSize.SMALL );
+        collapse.setIconFixedWidth( true );
         collapse.addClickHandler( new ClickHandler() {
             @Override
             public void onClick( ClickEvent event ) {
