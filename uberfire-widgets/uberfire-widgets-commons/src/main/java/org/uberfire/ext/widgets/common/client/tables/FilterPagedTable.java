@@ -147,7 +147,7 @@ public class FilterPagedTable<T>
         }
 
         addContentTab( gridHeader, close, grid, key );
-        selectTab( dataGridFilterHashMap.size() - 1 );
+        //selectTab( dataGridFilterHashMap.size() - 1 );
     }
 
     public void addAddTableButton( Button addTableButton ) {
