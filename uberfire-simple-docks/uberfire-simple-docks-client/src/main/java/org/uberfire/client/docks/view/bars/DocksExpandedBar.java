@@ -131,18 +131,17 @@ public class DocksExpandedBar
 
     private void setupCSS() {
 
+        collapse.setIcon( IconType.TIMES );
         if ( position == UberfireDockPosition.SOUTH ) {
             titlePanel.addStyleName( CSS.CSS().dockExpandedContentPanelSouth() );
             title.addStyleName( CSS.CSS().dockExpandedLabelSouth() );
-            collapse.setIcon( IconType.CHEVRON_DOWN );
+
             collapse.addStyleName( CSS.CSS().dockExpandedButtonSouth() );
         } else if ( position == UberfireDockPosition.WEST ) {
             title.addStyleName( CSS.CSS().dockExpandedLabelWest() );
-            collapse.setIcon( IconType.CHEVRON_LEFT );
             collapse.addStyleName( CSS.CSS().dockExpandedButtonWest() );
         } else if ( position == UberfireDockPosition.EAST ) {
             title.addStyleName( CSS.CSS().dockExpandedLabelEast() );
-            collapse.setIcon( IconType.CHEVRON_RIGHT );
             collapse.addStyleName( CSS.CSS().dockExpandedButtonEast() );
         }
         setupDockContentSize();
