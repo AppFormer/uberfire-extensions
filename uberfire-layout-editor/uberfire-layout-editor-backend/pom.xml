@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.uberfire</groupId>
     <artifactId>uberfire-layout-editor</artifactId>
-    <version>0.7.3-SNAPSHOT</version>
+    <version>0.7.4-SNAPSHOT</version>
   </parent>
 
   <artifactId>uberfire-layout-editor-backend</artifactId>
