@@ -40,6 +40,10 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
+import org.uberfire.client.annotations.WorkbenchSplashScreen;
+import org.uberfire.client.mvp.ActivityBeansCache;
+import org.uberfire.client.mvp.ActivityBeansInfo;
+import org.uberfire.client.mvp.WorkbenchEditorActivity;
 import org.uberfire.client.mvp.WorkbenchScreenActivity;
 import org.uberfire.ext.layout.editor.client.components.ModalConfigurationContext;
 import org.uberfire.ext.plugin.client.resources.i18n.CommonConstants;
@@ -83,6 +87,7 @@ public class EditScreen
     private Boolean revertChanges = Boolean.TRUE;
 
     private Map<String, String> lastParametersSaved = new HashMap<String, String>();
+    private List<String> availableWorkbenchScreensIds = new ArrayList<String>( );
 
     interface Binder
             extends
@@ -94,6 +99,7 @@ public class EditScreen
 
     public EditScreen(ModalConfigurationContext configContext) {
         clearModal();
+        getScreensId();
         this.configContext = configContext;
         setTitle(CommonConstants.INSTANCE.EditComponent());
         setMaxHeigth("350px");
@@ -122,6 +128,12 @@ public class EditScreen
             }
         } );
         addHiddlenHandler();
+
+    }
+
+    private void getScreensId() {
+        final ActivityBeansInfo activityBeansInfo = getActivityBeansInfo();
+        availableWorkbenchScreensIds = activityBeansInfo.getAvailableWorkbenchScreensIds();
     }
 
     private void clearModal() {
@@ -167,10 +179,9 @@ public class EditScreen
         revertChanges = Boolean.FALSE;
 
         // Make sure a default screen is set before finish
-        if (configContext.getComponentProperty(PLACE_NAME_PARAMETER) == null) {
-            List<String> screenIds = getWorkbenchScreenIds();
-            if (!screenIds.isEmpty()) {
-                configContext.setComponentProperty(PLACE_NAME_PARAMETER, screenIds.get(0));
+        if ( configContext.getComponentProperty( PLACE_NAME_PARAMETER ) == null ) {
+            if ( !availableWorkbenchScreensIds.isEmpty() ) {
+                configContext.setComponentProperty( PLACE_NAME_PARAMETER, availableWorkbenchScreensIds.get( 0 ) );
                 configContext.configurationFinished();
             } else {
                 // If no screens are available then cancel
@@ -251,14 +262,13 @@ public class EditScreen
 
         // Add the screen selector property
         final Map<String, String> parameters = configContext.getComponentProperties();
-        String selectedScreenId = parameters.get(PLACE_NAME_PARAMETER);
-        List<String> availableScreenIds = getWorkbenchScreenIds();
+        String selectedScreenId = parameters.get( PLACE_NAME_PARAMETER );
 
-        category.withField(new PropertyEditorFieldInfo(PLACE_NAME_PARAMETER,
-                    selectedScreenId == null ? "" : selectedScreenId, PropertyEditorType.COMBO)
-                .withComboValues(availableScreenIds)
-                .withKey(configContext.hashCode() + PLACE_NAME_PARAMETER));
 
+        category.withField( new PropertyEditorFieldInfo( PLACE_NAME_PARAMETER,
+                                                         selectedScreenId == null ? "" : selectedScreenId, PropertyEditorType.COMBO )
+                                    .withComboValues( availableWorkbenchScreensIds )
+                                    .withKey( configContext.hashCode() + PLACE_NAME_PARAMETER ) );
 
         // Add the rest of the screen's properties
         for (final String key : parameters.keySet()) {
@@ -274,22 +284,9 @@ public class EditScreen
         return category;
     }
 
-    private List<String> getWorkbenchScreenIds() {
-        List<String> result = new ArrayList<String>();
-        final Collection<IOCBeanDef<WorkbenchScreenActivity>> screens = IOC.getBeanManager().lookupBeans( WorkbenchScreenActivity.class );
-        for ( final IOCBeanDef<WorkbenchScreenActivity> beanDef : screens ) {
-            result.add(getName(beanDef));
-        }
-        return result;
-    }
-
-    private String getName(final IOCBeanDef<?> beanDef) {
-        for ( final Annotation annotation : beanDef.getQualifiers() ) {
-            if ( annotation instanceof Named) {
-                return ( (Named) annotation ).value();
-            }
-        }
-        return "";
+    private ActivityBeansInfo getActivityBeansInfo() {
+        final IOCBeanDef<ActivityBeansInfo> activityBeansInfoIOCBeanDef = IOC.getBeanManager().lookupBean( ActivityBeansInfo.class );
+        return activityBeansInfoIOCBeanDef.getInstance();
     }
 
     private PropertyEditorEvent generateEvent( PropertyEditorCategory category ) {
