@@ -50,12 +50,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.uberfire.client.editor.JSEditorActivity;
-import org.uberfire.client.mvp.ActivityManager;
-import org.uberfire.client.mvp.PerspectiveActivity;
-import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.client.mvp.SplashScreenActivity;
-import org.uberfire.client.mvp.WorkbenchEditorActivity;
-import org.uberfire.client.mvp.WorkbenchScreenActivity;
+import org.uberfire.client.mvp.*;
 import org.uberfire.client.perspective.JSWorkbenchPerspectiveActivity;
 import org.uberfire.client.screen.JSWorkbenchScreenActivity;
 import org.uberfire.client.splash.JSSplashScreenActivity;
@@ -123,6 +118,9 @@ public class PluginNavList extends Composite {
     @Inject
     private PlaceManager placeManager;
 
+    @Inject
+    private ActivityBeansInfo activityBeansInfo;
+
     private Map<String, Widget> pluginRef = new HashMap<String, Widget>();
 
     private final Map<PluginType, NavList> navLists = new HashMap<PluginType, NavList>();
@@ -142,24 +140,20 @@ public class PluginNavList extends Composite {
         classified.put( splashPluginResourceType, new HashSet<Activity>() );
         classified.put( dynamicMenuResourceType, new HashSet<Activity>() );
 
-        final Collection<IOCBeanDef<WorkbenchScreenActivity>> screens = IOC.getBeanManager().lookupBeans( WorkbenchScreenActivity.class );
-        for ( final IOCBeanDef<WorkbenchScreenActivity> beanDef : screens ) {
-            classified.get( screenPluginResourceType ).add( new Activity( getName( beanDef ), PluginType.SCREEN ) );
+        for ( final String screenId : activityBeansInfo.getAvailableWorkbenchScreensIds() ) {
+            classified.get( screenPluginResourceType ).add( new Activity( screenId, PluginType.SCREEN ) );
         }
 
-        final Collection<IOCBeanDef<PerspectiveActivity>> perspectives = IOC.getBeanManager().lookupBeans( PerspectiveActivity.class );
-        for ( final IOCBeanDef<PerspectiveActivity> beanDef : perspectives ) {
-            classified.get( perspectiveLayoutPluginResourceType ).add( new Activity( getName( beanDef ), PluginType.PERSPECTIVE ) );
+        for ( final String perspectiveId : activityBeansInfo.getAvailablePerspectivesIds() ) {
+            classified.get( perspectiveLayoutPluginResourceType ).add( new Activity( perspectiveId, PluginType.PERSPECTIVE ) );
         }
 
-        final Collection<IOCBeanDef<WorkbenchEditorActivity>> editors = IOC.getBeanManager().lookupBeans( WorkbenchEditorActivity.class );
-        for ( final IOCBeanDef<WorkbenchEditorActivity> beanDef : editors ) {
-            classified.get( editorPluginResourceType ).add( new Activity( getName( beanDef ), PluginType.EDITOR ) );
+        for ( final String editorId : activityBeansInfo.getAvailableWorkbenchEditorsIds() ) {
+            classified.get( editorPluginResourceType ).add( new Activity( editorId, PluginType.EDITOR ) );
         }
 
-        final Collection<IOCBeanDef<SplashScreenActivity>> splashes = IOC.getBeanManager().lookupBeans( SplashScreenActivity.class );
-        for ( final IOCBeanDef<SplashScreenActivity> beanDef : splashes ) {
-            classified.get( splashPluginResourceType ).add( new Activity( getName( beanDef ), PluginType.SPLASH ) );
+        for ( final String splashId : activityBeansInfo.getAvailableSplashScreensIds() ) {
+            classified.get( splashPluginResourceType ).add( new Activity( splashId, PluginType.SPLASH ) );
         }
 
         for ( final Plugin plugin : plugins ) {
@@ -237,15 +231,6 @@ public class PluginNavList extends Composite {
             return true;
         }
         return false;
-    }
-
-    private String getName( final IOCBeanDef<?> beanDef ) {
-        for ( final Annotation annotation : beanDef.getQualifiers() ) {
-            if ( annotation instanceof Named ) {
-                return ( (Named) annotation ).value();
-            }
-        }
-        return "";
     }
 
     private CollapseTrigger makeTriggerWidget( final ClientResourceType resourceType,
