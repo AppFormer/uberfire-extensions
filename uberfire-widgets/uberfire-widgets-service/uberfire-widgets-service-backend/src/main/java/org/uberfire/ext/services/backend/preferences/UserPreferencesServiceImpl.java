@@ -18,7 +18,6 @@ package org.uberfire.ext.services.backend.preferences;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.thoughtworks.xstream.XStream;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.uberfire.backend.server.UserServicesBackendImpl;
@@ -26,7 +25,8 @@ import org.uberfire.ext.services.shared.preferences.UserPreference;
 import org.uberfire.ext.services.shared.preferences.UserPreferencesService;
 import org.uberfire.ext.services.shared.preferences.UserPreferencesType;
 import org.uberfire.io.IOService;
-import org.uberfire.java.nio.file.Path;
+import org.uberfire.mvp.ParameterizedCommand;
+import org.uberfire.preferences.PreferenceStore;
 
 @Service
 public class UserPreferencesServiceImpl implements UserPreferencesService {
@@ -41,58 +41,36 @@ public class UserPreferencesServiceImpl implements UserPreferencesService {
     @Named("configIO")
     private IOService ioServiceConfig;
 
-    private XStream xs = new XStream();
+    @Inject
+    private PreferenceStore preferenceStore;
 
     @Override
     public void saveUserPreferences( final UserPreference preferences ) {
-        final Path preferencesPath = userServicesBackend.buildPath( identity.getIdentifier(),
-                                                                    preferences.getType().getExt(),
-                                                                    preferences.getPreferenceKey() );
-        saveUserPreferences( preferences,
-                             preferencesPath );
+        preferenceStore.put( buildKey( preferences ), preferences );
     }
 
     @Override
     public UserPreference loadUserPreferences( final String key,
                                                final UserPreferencesType type ) {
-        final Path preferencesPath = userServicesBackend.buildPath( identity.getIdentifier(),
-                                                                    type.getExt(),
-                                                                    key );
-        return loadUserPreferences( preferencesPath );
-    }
-
-    private void saveUserPreferences( final UserPreference preferences,
-                                      final Path path ) {
-        try {
-            ioServiceConfig.startBatch( path.getFileSystem() );
-            ioServiceConfig.write( path, xs.toXML( preferences ) );
-
-        } catch ( final Exception e ) {
-            throw new RuntimeException( e );
-        } finally {
-            ioServiceConfig.endBatch();
-        }
-    }
-
-    private UserPreference loadUserPreferences( final Path path ) {
-        try {
-            if ( ioServiceConfig.exists( path ) ) {
-                final String xml = ioServiceConfig.readAllString( path );
-                return (UserPreference) xs.fromXML( xml );
+        // We're just ignoring type now - deprecation should follow
+        final UserPreference[] result = new UserPreference[ 1 ];
+        preferenceStore.get( key, new ParameterizedCommand<UserPreference>() {
+            @Override
+            public void execute( final UserPreference value ) {
+                result[ 0 ] = value;
             }
+        } );
 
-        } catch ( final Exception e ) {
-            throw new RuntimeException( e );
-        }
-        return null;
+        return result[ 0 ];
     }
 
     @Override
     public UserPreference loadUserPreferences( final UserPreference preferences ) {
-        final Path preferencesPath = userServicesBackend.buildPath( identity.getIdentifier(),
-                                                                    preferences.getType().getExt(),
-                                                                    preferences.getPreferenceKey() );
-        return loadUserPreferences( preferencesPath );
+        return loadUserPreferences( buildKey( preferences ), preferences.getType() );
+    }
+
+    private String buildKey( final UserPreference preference ) {
+        return preference.getPreferenceKey() + "." + preference.getType().getExt();
     }
 
 }
