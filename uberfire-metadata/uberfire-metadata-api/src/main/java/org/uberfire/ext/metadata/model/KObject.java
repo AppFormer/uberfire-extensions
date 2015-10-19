@@ -19,5 +19,7 @@ package org.uberfire.ext.metadata.model;
 public interface KObject extends KObjectKey,
                                  PropertyBag {
 
+    boolean isFullText();
+
 }
 

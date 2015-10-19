@@ -64,6 +64,11 @@ public final class KObjectUtil {
             }
 
             @Override
+            public boolean isFullText() {
+                return Boolean.parseBoolean( document.get( "full" ) );
+            }
+
+            @Override
             public boolean equals( final Object obj ) {
                 if ( obj == null ) {
                     return false;

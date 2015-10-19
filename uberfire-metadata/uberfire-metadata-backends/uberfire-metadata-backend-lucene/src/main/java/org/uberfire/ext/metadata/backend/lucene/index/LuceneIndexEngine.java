@@ -117,6 +117,9 @@ public class LuceneIndexEngine implements MetaIndexEngine {
         doc.add( new StringField( "segment.id",
                                   object.getSegmentId(),
                                   Field.Store.YES ) );
+        doc.add( new StringField( "full",
+                                  Boolean.toString( object.isFullText() ),
+                                  Field.Store.YES ) );
 
         final StringBuilder allText = new StringBuilder( object.getKey() ).append( '\n' );
 
@@ -124,15 +127,19 @@ public class LuceneIndexEngine implements MetaIndexEngine {
             final IndexableField[] fields = fieldFactory.build( property );
             for ( final IndexableField field : fields ) {
                 doc.add( field );
-                if ( field instanceof TextField && !( property.getValue() instanceof Boolean ) ) {
-                    allText.append( field.stringValue() ).append( '\n' );
+                if ( object.isFullText() ) {
+                    if ( field instanceof TextField && !( property.getValue() instanceof Boolean ) ) {
+                        allText.append( field.stringValue() ).append( '\n' );
+                    }
                 }
             }
         }
 
-        doc.add( new TextField( FULL_TEXT_FIELD,
-                                allText.toString().toLowerCase(),
-                                Field.Store.NO ) );
+        if ( object.isFullText() ) {
+            doc.add( new TextField( FULL_TEXT_FIELD,
+                                    allText.toString().toLowerCase(),
+                                    Field.Store.NO ) );
+        }
 
         return doc;
     }
