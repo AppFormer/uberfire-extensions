@@ -120,6 +120,11 @@ public final class KObjectUtil {
             }
 
             @Override
+            public boolean isFullText() {
+                return true;
+            }
+
+            @Override
             public Iterable<KProperty<?>> getProperties() {
                 return new ArrayList<KProperty<?>>( attrs.length ) {{
                     for ( final FileAttribute<?> attr : attrs ) {

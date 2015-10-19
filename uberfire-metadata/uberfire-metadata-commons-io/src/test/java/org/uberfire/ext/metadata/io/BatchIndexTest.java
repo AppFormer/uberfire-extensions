@@ -248,6 +248,16 @@ public class BatchIndexTest {
                         assertEquals( 1, hits.length );
                     }
 
+                    {
+                        final TopScoreDocCollector collector = TopScoreDocCollector.create( 10, true );
+
+                        searcher.search( new TermQuery( new Term( "fullText", "second" ) ), collector );
+
+                        final ScoreDoc[] hits = collector.topDocs().scoreDocs;
+
+                        assertEquals( 1, hits.length );
+                    }
+
                     ( (LuceneIndex) index ).nrtRelease( searcher );
 
                 } catch ( Exception ex ) {
