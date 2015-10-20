@@ -37,7 +37,7 @@ public class MultiPageEditorView
         extends Composite
         implements RequiresResize {
 
-    private static final int MARGIN = 20;
+    private static final int MARGIN = 40;
 
     final TabPanel tabPanel;
 
