@@ -70,6 +70,7 @@ public class PagedTable<T>
         this.pageSize=pageSize;
         this.dataGrid.setPageSize( pageSize );
         this.pager.setDisplay( dataGrid );
+        this.pager.setPageSize( pageSize );
         setShowPageSizesSelector( showPageSizesSelector );
         createPageSizesListBox( 5, 20, 5 );
         storePageSizeInGridPreferences( pageSize );
@@ -81,6 +82,7 @@ public class PagedTable<T>
         this.pageSize =pageSize;
         this.dataGrid.setPageSize( pageSize );
         this.pager.setDisplay( dataGrid );
+        this.pager.setPageSize( pageSize );
         setShowPageSizesSelector( showPageSizesSelector );
         createPageSizesListBox(5,20,5);
     }
@@ -92,6 +94,7 @@ public class PagedTable<T>
         this.pageSize=pageSize;
         this.dataGrid.setPageSize( pageSize );
         this.pager.setDisplay( dataGrid );
+        this.pager.setPageSize( pageSize );
         setShowPageSizesSelector( showPageSizesSelector );
         createPageSizesListBox(5,20,5);
     }
@@ -105,6 +108,7 @@ public class PagedTable<T>
         this.pageSize=pageSize;
         this.dataGrid.setPageSize( pageSize );
         this.pager.setDisplay( dataGrid );
+        this.pager.setPageSize( pageSize );
         setShowPageSizesSelector( showPageSizesSelector );
         createPageSizesListBox(5,20,5);
     }
