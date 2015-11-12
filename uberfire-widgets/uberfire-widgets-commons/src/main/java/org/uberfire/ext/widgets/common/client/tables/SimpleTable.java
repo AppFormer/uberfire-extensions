@@ -16,6 +16,9 @@
 
 package org.uberfire.ext.widgets.common.client.tables;
 
+import java.util.List;
+import javax.inject.Inject;
+
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.DataGrid;
 import com.github.gwtbootstrap.client.ui.Label;
@@ -28,17 +31,29 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortList;
 import com.google.gwt.user.cellview.client.RowStyles;
-import com.google.gwt.user.client.ui.*;
-import com.google.gwt.view.client.*;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.CellPreviewEvent.Handler;
+import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.RangeChangeEvent;
+import com.google.gwt.view.client.RowCountChangeEvent;
+import com.google.gwt.view.client.SelectionModel;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.security.shared.api.identity.User;
-import org.uberfire.ext.services.shared.preferences.*;
+import org.uberfire.ext.services.shared.preferences.GridColumnPreference;
+import org.uberfire.ext.services.shared.preferences.GridGlobalPreferences;
+import org.uberfire.ext.services.shared.preferences.GridPreferencesStore;
+import org.uberfire.ext.services.shared.preferences.UserPreferencesService;
+import org.uberfire.ext.services.shared.preferences.UserPreferencesType;
 import org.uberfire.ext.widgets.common.client.resources.CommonResources;
-
-import javax.inject.Inject;
-import java.util.List;
 
 /**
  * A composite Widget that shows rows of data (not-paged) and a "column picker"
@@ -93,24 +108,29 @@ public class SimpleTable<T>
     private ProvidesKey<T> providersKey;
 
     public SimpleTable() {
-        dataGrid = new DataGrid<T>();
+        dataGrid = makeDataGrid();
         setupGridTable();
     }
 
     public SimpleTable( final ProvidesKey<T> providesKey,
                         final GridGlobalPreferences gridGlobalPreferences ) {
-
-        dataGrid = new DataGrid<T>( Integer.MAX_VALUE,
-                                    providesKey );
+        dataGrid = makeDataGrid( providesKey );
         this.gridPreferencesStore = new GridPreferencesStore( gridGlobalPreferences );
         setupGridTable();
     }
 
     public SimpleTable( final ProvidesKey<T> providesKey ) {
-
-        dataGrid = new DataGrid<T>( Integer.MAX_VALUE,
-                                    providesKey );
+        dataGrid = makeDataGrid( providesKey );
         setupGridTable();
+    }
+
+    protected DataGrid<T> makeDataGrid() {
+        return new DataGrid<T>();
+    }
+
+    protected DataGrid<T> makeDataGrid( ProvidesKey<T> providesKey ) {
+        return new DataGrid<T>( Integer.MAX_VALUE,
+                                    providesKey );
     }
 
     private void setupGridTable() {
