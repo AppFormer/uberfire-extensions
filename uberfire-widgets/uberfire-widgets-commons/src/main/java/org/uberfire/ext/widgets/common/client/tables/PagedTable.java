@@ -67,33 +67,21 @@ public class PagedTable<T>
 
     public PagedTable( final int pageSize ) {
         super();
-        this.pageSize=pageSize;
-        this.dataGrid.setPageSize( pageSize );
-        this.pager.setDisplay( dataGrid );
-        setShowPageSizesSelector( showPageSizesSelector );
-        createPageSizesListBox( 5, 20, 5 );
+        init( pageSize, showPageSizesSelector );
         storePageSizeInGridPreferences( pageSize );
     }
 
     public PagedTable( final int pageSize,
                        final ProvidesKey<T> providesKey ) {
         super( providesKey );
-        this.pageSize =pageSize;
-        this.dataGrid.setPageSize( pageSize );
-        this.pager.setDisplay( dataGrid );
-        setShowPageSizesSelector( showPageSizesSelector );
-        createPageSizesListBox(5,20,5);
+        init( pageSize, showPageSizesSelector );
     }
 
     public PagedTable( final int pageSize,
                        final ProvidesKey<T> providesKey,
                        final GridGlobalPreferences gridGlobalPreferences ) {
         super( providesKey, gridGlobalPreferences );
-        this.pageSize=pageSize;
-        this.dataGrid.setPageSize( pageSize );
-        this.pager.setDisplay( dataGrid );
-        setShowPageSizesSelector( showPageSizesSelector );
-        createPageSizesListBox(5,20,5);
+        init( pageSize, showPageSizesSelector );
     }
 
     public PagedTable( final int pageSize,
@@ -102,8 +90,14 @@ public class PagedTable<T>
                        final boolean showPageSizesSelector ) {
 
         super( providesKey, gridGlobalPreferences );
+        init( pageSize, showPageSizesSelector );
+    }
+
+    private void init( int pageSize,
+                       boolean showPageSizesSelector ) {
         this.pageSize=pageSize;
         this.dataGrid.setPageSize( pageSize );
+        this.pager.setPageSize( pageSize );
         this.pager.setDisplay( dataGrid );
         setShowPageSizesSelector( showPageSizesSelector );
         createPageSizesListBox(5,20,5);
