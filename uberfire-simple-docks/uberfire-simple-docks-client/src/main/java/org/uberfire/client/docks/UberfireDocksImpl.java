@@ -55,6 +55,10 @@ public class UberfireDocksImpl implements UberfireDocks {
     @Inject
     private Event<UberfireDockReadyEvent> dockReadyEvent;
 
+    // For proxying
+    public UberfireDocksImpl() {
+    }
+
     @Inject
     public UberfireDocksImpl( DocksBars docksBars ) {
         this.docksBars = docksBars;
