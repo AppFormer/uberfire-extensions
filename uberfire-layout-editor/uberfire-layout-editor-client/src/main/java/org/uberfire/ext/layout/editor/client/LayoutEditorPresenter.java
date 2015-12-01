@@ -15,6 +15,7 @@
  */
 package org.uberfire.ext.layout.editor.client;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -23,15 +24,20 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.errai.ioc.client.container.IOC;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
+import org.uberfire.ext.layout.editor.client.components.LayoutDragComponentGroup;
 import org.uberfire.ext.layout.editor.client.structure.EditorWidget;
 import org.uberfire.ext.layout.editor.client.components.GridLayoutDragComponent;
 import org.uberfire.ext.layout.editor.client.components.LayoutDragComponent;
+import org.uberfire.ext.layout.editor.client.util.DragTypeBeanResolver;
 import org.uberfire.workbench.events.NotificationEvent;
 
 @Dependent
 public class LayoutEditorPresenter {
+
+    public static final String[] SPANS = {"12", "6 6", "4 4 4"};
 
     @Inject
     private Event<NotificationEvent> ufNotification;
@@ -65,6 +71,14 @@ public class LayoutEditorPresenter {
 
         void removeLayoutComponentProperty( EditorWidget component,
                                             String key );
+
+        void addDraggableComponentGroup( LayoutDragComponentGroup group );
+
+        void addDraggableComponentToGroup( String groupId, String componentId, LayoutDragComponent component );
+
+        void removeDraggableGroup( String id );
+
+        void removeDraggableComponentFromGroup( String groupId, String componentId );
     }
 
     @Inject
@@ -77,10 +91,17 @@ public class LayoutEditorPresenter {
     }
 
     public void setupDndPallete(List<LayoutDragComponent> layoutDragComponents ) {
-        view.setupComponents(layoutDragComponents);
-        view.setupGridSystem(Arrays.asList((LayoutDragComponent) new GridLayoutDragComponent("12", ufNotification),
-                new GridLayoutDragComponent("6 6", ufNotification),
-                new GridLayoutDragComponent("4 4 4", ufNotification)) );
+        view.setupComponents( layoutDragComponents );
+
+        List components = new ArrayList(  );
+
+        for ( String span : SPANS ) {
+            GridLayoutDragComponent component = IOC.getBeanManager().lookupBean( GridLayoutDragComponent.class ).newInstance();
+            component.setSpan( span );
+            components.add( component );
+        }
+
+        view.setupGridSystem( components );
     }
 
     public LayoutTemplate getLayout() {
@@ -96,11 +117,27 @@ public class LayoutEditorPresenter {
     }
 
     public void addLayoutProperty(String key, String value) {
-        view.addLayoutProperty(key, value);
+        view.addLayoutProperty( key, value );
     }
 
     public String getLayoutProperty(String key) {
-        return view.getLayoutProperty(key);
+        return view.getLayoutProperty( key );
+    }
+
+    public void addDraggableComponentGroup( LayoutDragComponentGroup group ) {
+        view.addDraggableComponentGroup( group );
+    }
+
+    public void addDraggableComponentToGroup( String groupId, String componentId, LayoutDragComponent component ) {
+        view.addDraggableComponentToGroup( groupId, componentId, component );
+    }
+
+    public void removeDraggableGroup( String id ) {
+        view.removeDraggableGroup( id );
+    }
+
+    public void removeDraggableComponentFromGroup( String groupId, String componentId ) {
+        view.removeDraggableComponentFromGroup( groupId, componentId );
     }
 }
 

@@ -57,9 +57,9 @@ public class DragGridElementTest {
 
     @Test
     public void createDragStartInternalComponent() throws Exception {
-        String data = prepareData( GridLayoutDragComponent.INTERNAL_DRAG_COMPONENT, "label" );
+        String data = prepareData( GridLayoutDragComponent.INTERNAL_DRAG_COMPONENT, "span" );
         DragStartEvent dragStartEvent = mock( DragStartEvent.class );
-        when( internalType.label() ).thenReturn( "label" );
+        when( internalType.getSpan() ).thenReturn( "span" );
 
         final DataTransfer mock = mock( DataTransfer.class );
         when( mock.getData( DndData.FORMAT ) ).thenReturn( data );
