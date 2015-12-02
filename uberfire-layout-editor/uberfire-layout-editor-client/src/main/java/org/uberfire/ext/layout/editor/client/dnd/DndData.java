@@ -28,7 +28,7 @@ public class DndData {
 
     public static String generateData( LayoutDragComponent type ) {
         if ( type instanceof GridLayoutDragComponent ) {
-            return prepareData( GridLayoutDragComponent.INTERNAL_DRAG_COMPONENT, ( ( GridLayoutDragComponent ) type ).label() );
+            return prepareData( GridLayoutDragComponent.INTERNAL_DRAG_COMPONENT, ( ( GridLayoutDragComponent ) type ).getSpan() );
         } else {
             return prepareData( LayoutDragComponent.class.toString(), type.getClass().getName() );
         }

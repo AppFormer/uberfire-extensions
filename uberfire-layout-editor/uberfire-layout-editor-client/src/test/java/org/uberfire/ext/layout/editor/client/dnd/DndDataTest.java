@@ -36,7 +36,7 @@ public class DndDataTest {
     DropEvent externalEvent;
 
     private final String INTERNAL_TYPE = "INTERNAL_DRAG_COMPONENT";
-    private final String INTERNAL_VALUE = "label";
+    private final String INTERNAL_VALUE = "getSpan";
     private final String INTERNAL_DATA = prepareData( INTERNAL_TYPE, INTERNAL_VALUE );
 
     private final String EXTERNAL_TYPE = "interface org.uberfire.ext.layout.editor.client.components.LayoutDragComponent";
@@ -47,7 +47,7 @@ public class DndDataTest {
     @Before
     public void setup() {
         internal = mock( GridLayoutDragComponent.class );
-        when( internal.label() ).thenReturn( "label" );
+        when( internal.getSpan() ).thenReturn( "span" );
         external = new DummyLayoutDragComponent();
 
         internalEvent = mock( DropEvent.class );
