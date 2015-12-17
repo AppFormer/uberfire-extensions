@@ -16,6 +16,13 @@
 
 package org.uberfire.ext.metadata.io;
 
+import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
+import static org.uberfire.java.nio.file.Files.walkFileTree;
+
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
@@ -38,9 +45,6 @@ import org.uberfire.java.nio.file.attribute.BasicFileAttributes;
 import org.uberfire.java.nio.file.attribute.FileAttribute;
 import org.uberfire.java.nio.file.attribute.FileAttributeView;
 
-import static org.uberfire.commons.validation.PortablePreconditions.*;
-import static org.uberfire.java.nio.file.Files.*;
-
 /**
  *
  */
@@ -53,6 +57,8 @@ public final class BatchIndex {
     private final Class<? extends FileAttributeView>[] views;
     private final AtomicBoolean indexDisposed = new AtomicBoolean( false );
     private final Observer observer;
+    private final Set<FileSystem> indexPending = new CopyOnWriteArraySet<FileSystem>( Collections.newSetFromMap( new IdentityHashMap<FileSystem, Boolean>() ) );
+    
 
     public BatchIndex( final MetaIndexEngine indexEngine,
                        final IOService ioService,
@@ -68,7 +74,9 @@ public final class BatchIndex {
     }
 
     public void runAsync( final FileSystem fs ) {
-        if ( fs != null && fs.getRootDirectories().iterator().hasNext() ) {
+        if ( fs != null && fs.getRootDirectories().iterator().hasNext() && !indexPending.contains( fs ) ) {
+            indexPending.add( fs );
+            
             SimpleAsyncExecutorService.getDefaultInstance().execute( new DescriptiveRunnable() {
                 @Override
                 public String getDescription() {
@@ -77,28 +85,33 @@ public final class BatchIndex {
 
                 @Override
                 public void run() {
-                    final AtomicBoolean indexFinished = new AtomicBoolean( false );
-                    indexEngine.beforeDispose( new Runnable() {
-                        @Override
-                        public void run() {
-                            indexDisposed.set( true );
+                    try {
+                        final AtomicBoolean indexFinished = new AtomicBoolean( false );
+                        indexEngine.beforeDispose( new Runnable() {
 
-                            if ( !indexFinished.get() ) {
-                                indexEngine.delete( KObjectUtil.toKCluster( fs ) );
+                            @Override
+                            public void run() {
+                                indexDisposed.set( true );
+
+                                if ( !indexFinished.get() ) {
+                                    indexEngine.delete( KObjectUtil.toKCluster( fs ) );
+                                }
+                            }
+                        } );
+
+                        try {
+                            for ( final Path root : fs.getRootDirectories() ) {
+                                BatchIndex.this.run( root );
+                            }
+                            indexFinished.set( true );
+                        } catch ( Exception ex ) {
+                            if ( !indexDisposed.get() ) {
+                                logError( "FileSystem Index fails. [@" + fs.toString() + "]",
+                                          ex );
                             }
                         }
-                    } );
-
-                    try {
-                        for ( final Path root : fs.getRootDirectories() ) {
-                            BatchIndex.this.run( root );
-                        }
-                        indexFinished.set( true );
-                    } catch ( Exception ex ) {
-                        if ( !indexDisposed.get() ) {
-                            logError( "FileSystem Index fails. [@" + fs.toString() + "]",
-                                      ex );
-                        }
+                    } finally {
+                        indexPending.remove( fs );
                     }
                 }
             } );
