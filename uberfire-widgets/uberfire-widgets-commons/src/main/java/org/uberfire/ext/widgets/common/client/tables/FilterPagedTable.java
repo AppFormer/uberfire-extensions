@@ -20,7 +20,6 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -172,20 +171,15 @@ public class FilterPagedTable<T>
         Widget w = uiBinder.createAndBindUi( this );
         tabPanel.addSelectionHandler( new SelectionHandler<Integer>() {
             @Override
-            public void onSelection( final SelectionEvent<Integer> event ) {
-                Scheduler.get().scheduleDeferred( new com.google.gwt.user.client.Command() {
-                    @Override public void execute() {
-                        Integer selectedPosition = event.getSelectedItem();
-                        ArrayList<String> tabsId = multiGridPreferencesStore.getGridsId();
-                        if(selectedPosition< tabsId.size()) {
-                            String key = tabsId.get( selectedPosition );
-                            multiGridPreferencesStore.setSelectedGrid( key );
-                            preferencesService.call().saveUserPreferences( multiGridPreferencesStore );
-                            dataGridFilterHashMap.get( key ).getFilterCommand().execute();
-                        }
-                    }
-                } );
-
+            public void onSelection( SelectionEvent<Integer> event ) {
+                Integer selectedPosition = event.getSelectedItem();
+                ArrayList<String> tabsId = multiGridPreferencesStore.getGridsId();
+                if(selectedPosition< tabsId.size()) {
+                    String key = tabsId.get( selectedPosition );
+                    multiGridPreferencesStore.setSelectedGrid( key );
+                    preferencesService.call().saveUserPreferences( multiGridPreferencesStore );
+                    dataGridFilterHashMap.get( key ).getFilterCommand().execute();
+                }
             }
         } );
 
