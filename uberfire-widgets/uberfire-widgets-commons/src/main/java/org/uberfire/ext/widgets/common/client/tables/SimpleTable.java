@@ -191,6 +191,7 @@ public class SimpleTable<T>
 
     public void redraw() {
         dataGrid.redraw();
+        dataGrid.flush();
     }
 
     public void refresh() {
@@ -293,10 +294,12 @@ public class SimpleTable<T>
                             final List<? extends T> values ) {
         dataGrid.setRowData( start,
                              values );
+        redraw();
     }
 
     public void setRowData( final List<? extends T> values ) {
         dataGrid.setRowData( values );
+        redraw();
     }
 
     @Override
