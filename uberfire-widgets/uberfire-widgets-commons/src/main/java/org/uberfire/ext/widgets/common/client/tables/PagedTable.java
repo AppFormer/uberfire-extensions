@@ -113,7 +113,7 @@ public class PagedTable<T>
      */
     public void setDataProvider( final AsyncDataProvider<T> dataProvider ) {
         this.dataProvider = dataProvider;
-        this.dataProvider.addDataDisplay( dataGrid );
+        this.dataProvider.addDataDisplay( this );
     }
 
     public int getPageSize() {
