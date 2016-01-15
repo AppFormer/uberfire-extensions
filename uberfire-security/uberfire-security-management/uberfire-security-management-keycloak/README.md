@@ -7,7 +7,8 @@ The classes from this package contains the users and groups management services 
 
 * The users management services implementations are provided by class `org.uberfire.ext.security.management.keycloak.KeyCloakUserManagementService`.              
 * The concrete users management service implementation is provided by class `org.uberfire.ext.security.management.keycloak.KeyCloakUserManager`, that **binds the KeyCloak users for the given realm into application users**.                   
-* The concrete roles management service implementation is provided by class `org.uberfire.ext.security.management.keycloak.KeyCloakGroupManager`, that **binds the KeyCloak roles for the given realm into application groups or roles**.                   
+* The concrete groups management service implementation is provided by class `org.uberfire.ext.security.management.keycloak.KeyCloakGroupManager`, that **binds the KeyCloak roles for the given realm into application groups**.                   
+* About the role management service, as KeyCloak does not have support for both groups and roles, application roles are the ones statically defined in the workbench via the `org.uberfire.ext.security.server.RolesRegistry`.                      
 
 Installation notes
 ------------------
