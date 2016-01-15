@@ -22,7 +22,7 @@ This provider supports realm types based on properties files, as the above one, 
 
 * The users management services implementations are provided by class `org.uberfire.ext.security.management.wildfly.cli.WildflyCLIUserManagementService`.              
 * The concrete users management service implementation is provided by class `org.uberfire.ext.security.management.wildfly.cli.WildflyUserPropertiesCLIManager`, that **binds the Wildfly / EAP users for the given realm into application users**.                   
-* The concrete roles management service implementation is provided by class `org.uberfire.ext.security.management.wildfly.cli.WildflyGroupPropertiesCLIManager`, that **binds the Wildfly / EAP roles for the given realm into application groups**.                   
+* The concrete roles management service implementation is provided by class `org.uberfire.ext.security.management.wildfly.cli.WildflyGroupPropertiesCLIManager`, that **binds the Wildfly / EAP roles for the given realm into application groups or roles**.                   
 
 Installation notes
 ------------------
