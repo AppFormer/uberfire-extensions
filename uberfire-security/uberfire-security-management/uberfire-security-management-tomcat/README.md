@@ -9,8 +9,8 @@ This provider supports realm types based on XML files (the default ones in Tomca
 
 * The users management services implementations are provided by class `org.uberfire.ext.security.management.tomcat.TomcatUserManagementService`.              
 * The concrete users management service implementation is provided by class `org.uberfire.ext.security.management.tomcat.TomcatUserManager`, that **binds the Tomcat users for the given realm into application users**.                   
-* The concrete roles management service implementation is provided by class `org.uberfire.ext.security.management.tomcat.TomcatGroupManager`, that **binds the Tomcat roles for the given realm into application groups**.                   
-
+* The concrete group management service implementation is provided by class `org.uberfire.ext.security.management.tomcat.TomcatGroupManager`, that **binds the Tomcat roles for the given realm into application groups or roles**.                   
+* About the role management service, as Tomcat default realm does not have support for both groups and roles, application roles are the ones statically defined in the workbench via the `org.uberfire.ext.security.server.RolesRegistry`.                      
 
 Installation notes
 ------------------
