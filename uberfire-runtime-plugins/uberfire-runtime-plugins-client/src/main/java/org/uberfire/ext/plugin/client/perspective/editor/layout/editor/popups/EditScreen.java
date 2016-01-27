@@ -15,9 +15,10 @@
  */
 package org.uberfire.ext.plugin.client.perspective.editor.layout.editor.popups;
 
-import java.lang.annotation.Annotation;
-import java.util.*;
-import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -26,18 +27,15 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Widget;
-import org.gwtbootstrap3.client.shared.event.*;
+import org.gwtbootstrap3.client.shared.event.ModalHiddenEvent;
+import org.gwtbootstrap3.client.shared.event.ModalHiddenHandler;
 import org.gwtbootstrap3.client.ui.FormGroup;
 import org.gwtbootstrap3.client.ui.HelpBlock;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.constants.ValidationState;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
-import org.uberfire.client.annotations.WorkbenchSplashScreen;
-import org.uberfire.client.mvp.ActivityBeansCache;
 import org.uberfire.client.mvp.ActivityBeansInfo;
-import org.uberfire.client.mvp.WorkbenchEditorActivity;
-import org.uberfire.client.mvp.WorkbenchScreenActivity;
 import org.uberfire.ext.layout.editor.client.components.ModalConfigurationContext;
 import org.uberfire.ext.plugin.client.resources.i18n.CommonConstants;
 import org.uberfire.ext.plugin.client.validation.NameValidator;
@@ -47,6 +45,7 @@ import org.uberfire.ext.properties.editor.model.PropertyEditorEvent;
 import org.uberfire.ext.properties.editor.model.PropertyEditorFieldInfo;
 import org.uberfire.ext.properties.editor.model.PropertyEditorType;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
+import org.uberfire.ext.widgets.common.client.common.popups.ButtonPressed;
 import org.uberfire.ext.widgets.common.client.common.popups.footers.ModalFooterOKCancelButtons;
 
 import static org.uberfire.ext.plugin.client.perspective.editor.layout.editor.ScreenLayoutDragComponent.*;
@@ -73,10 +72,10 @@ public class EditScreen
     @UiField
     PropertyEditorWidget propertyEditor;
 
-    private Boolean revertChanges = Boolean.TRUE;
+    private ButtonPressed buttonPressed = ButtonPressed.CLOSE;
 
     private Map<String, String> lastParametersSaved = new HashMap<String, String>();
-    private List<String> availableWorkbenchScreensIds = new ArrayList<String>( );
+    protected List<String> availableWorkbenchScreensIds = new ArrayList<String>();
 
     interface Binder
             extends
@@ -94,29 +93,28 @@ public class EditScreen
         propertyEditor.handle( generateEvent( generateScreenSettingsCategory() ) );
         saveOriginalState();
         add( new ModalFooterOKCancelButtons(
-                        new Command() {
-                            @Override
-                            public void execute() {
-                                okButton();
-                            }
-                        },
-                        new Command() {
-                            @Override
-                            public void execute() {
-                                cancelButton();
-                            }
-                        }
-                )
-        );
-        addHiddlenHandler();
+                     new Command() {
+                         @Override
+                         public void execute() {
+                             okButton();
+                         }
+                     },
+                     new Command() {
+                         @Override
+                         public void execute() {
+                             cancelButton();
+                         }
+                     }
+             )
+           );
+        addHiddenHandler();
 
     }
 
-    private void getScreensId() {
+    protected void getScreensId() {
         final ActivityBeansInfo activityBeansInfo = getActivityBeansInfo();
         availableWorkbenchScreensIds = activityBeansInfo.getAvailableWorkbenchScreensIds();
     }
-
 
     private void saveOriginalState() {
         lastParametersSaved = new HashMap<String, String>();
@@ -126,15 +124,20 @@ public class EditScreen
         }
     }
 
-    private void addHiddlenHandler() {
+    protected void addHiddenHandler() {
         addHiddenHandler( new ModalHiddenHandler() {
             @Override
             public void onHidden( ModalHiddenEvent hiddenEvent ) {
-                if ( userPressCloseOrCancel() ) {
+                if ( userPressedCloseOrCancel() ) {
                     revertChanges();
+                    configContext.configurationCancelled();
                 }
             }
         } );
+    }
+
+    private boolean userPressedCloseOrCancel() {
+        return ButtonPressed.CANCEL.equals( buttonPressed ) || ButtonPressed.CLOSE.equals( buttonPressed );
     }
 
     private void revertChanges() {
@@ -144,17 +147,12 @@ public class EditScreen
         }
     }
 
-    private boolean userPressCloseOrCancel() {
-        return revertChanges;
-    }
-
     public void show() {
         super.show();
     }
 
     void okButton() {
-
-        revertChanges = Boolean.FALSE;
+        buttonPressed = ButtonPressed.OK;
 
         // Make sure a default screen is set before finish
         if ( configContext.getComponentProperty( PLACE_NAME_PARAMETER ) == null ) {
@@ -168,12 +166,13 @@ public class EditScreen
         } else {
             configContext.configurationFinished();
         }
-        super.hide();
+
+        hide();
     }
 
     void cancelButton() {
-        super.hide();
-        configContext.configurationCancelled();
+        buttonPressed = ButtonPressed.CANCEL;
+        hide();
     }
 
     @Override
@@ -243,7 +242,6 @@ public class EditScreen
         final Map<String, String> parameters = configContext.getComponentProperties();
         String selectedScreenId = parameters.get( PLACE_NAME_PARAMETER );
 
-
         category.withField( new PropertyEditorFieldInfo( PLACE_NAME_PARAMETER,
                                                          selectedScreenId == null ? "" : selectedScreenId, PropertyEditorType.COMBO )
                                     .withComboValues( availableWorkbenchScreensIds )
@@ -271,5 +269,9 @@ public class EditScreen
     private PropertyEditorEvent generateEvent( PropertyEditorCategory category ) {
         PropertyEditorEvent event = new PropertyEditorEvent( PROPERTY_EDITOR_KEY, category );
         return event;
+    }
+
+    protected ModalConfigurationContext getConfigContext() {
+        return this.configContext;
     }
 }
