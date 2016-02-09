@@ -172,7 +172,7 @@ public class KeyCloakGroupManager extends BaseKeyCloakManager implements GroupMa
 
     @Override
     public void destroy() throws Exception {
-
+        close();
     }
 
 }

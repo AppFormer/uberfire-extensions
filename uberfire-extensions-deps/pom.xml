@@ -39,8 +39,8 @@
     <version.org.uberfire>${project.version}</version.org.uberfire>
     <version.com.ahome-it.lienzo-core>2.0.192-RC1</version.com.ahome-it.lienzo-core>
     <!-- Uberfire Security Management. -->
-    <version.org.jboss.keycloak>1.4.0.Final</version.org.jboss.keycloak>
-    <version.org.jboss.resteasy.client>3.0.9.Final</version.org.jboss.resteasy.client>
+    <version.org.jboss.keycloak>1.8.0.Final</version.org.jboss.keycloak>
+    <version.org.jboss.resteasy.keycloak-admin-client>3.0.9.Final</version.org.jboss.resteasy.keycloak-admin-client>
     <version.org.apache.tomcat>7.0.61</version.org.apache.tomcat>
     <version.org.jboss.wildfly>8.2.0.Final</version.org.jboss.wildfly>
   </properties>
@@ -122,20 +122,30 @@
         <version>${version.org.jboss.keycloak}</version>
       </dependency>
 
-      <!-- Required JAXRS API v3 by Keycloak admin client. 
-          This dependency is declared as optional in 'uberfire-security-management-keycloak' module, 
-          so not transitively added if module is not used.  
-      -->
       <dependency>
         <groupId>org.jboss.resteasy</groupId>
-        <artifactId>jaxrs-api</artifactId>
-        <version>${version.org.jboss.resteasy.client}</version>
+        <artifactId>resteasy-jaxrs</artifactId>
+        <version>${version.org.jboss.resteasy}</version>
       </dependency>
 
       <dependency>
         <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-jackson-provider</artifactId>
+        <version>${version.org.jboss.resteasy}</version>
+      </dependency>
+
+      <!-- Required JAXRS API v3 by Keycloak admin client. -->
+      <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>jaxrs-api</artifactId>
+        <version>${version.org.jboss.resteasy.keycloak-admin-client}</version>
+      </dependency>
+
+      <!-- Required resteasy v3 by Keycloak admin client. -->
+      <dependency>
+        <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-client</artifactId>
-        <version>${version.org.jboss.resteasy.client}</version>
+        <version>${version.org.jboss.resteasy.keycloak-admin-client}</version>
       </dependency>
       
       <!-- Uberfire Security Management - EAP / Wdilfly. -->

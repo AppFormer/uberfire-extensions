@@ -101,13 +101,21 @@ public abstract class BaseKeyCloakManager {
         LOG.debug("Configuration of KeyCloak provider finished.");
     }
 
-    protected synchronized Keycloak getKeyCloakInstance() {
+    protected Keycloak getKeyCloakInstance() {
         if (this.keycloak == null) {
             this.keycloak = Keycloak.getInstance(authServer, realm, user, password, clientId, clientPassword);
         }
         return keycloak;
     }
-    
+
+    protected boolean close() {
+        if (null != this.keycloak) {
+            keycloak.close();
+            return true;
+        }
+        return false;
+    }
+
     protected RealmResource getRealmResource() {
         return getKeyCloakInstance().realm(realm);
     }
