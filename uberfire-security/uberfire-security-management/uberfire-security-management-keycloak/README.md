@@ -22,37 +22,43 @@ This provider uses the *KeyCloak Admin Client* (which uses KeyCloak's REST API s
         <dependency>
           <groupId>org.keycloak</groupId>
           <artifactId>keycloak-core</artifactId>
-          <version>1.4.0.Final</version>
+          <version>1.8.0.Final</version>
         </dependency>
         
         <dependency>
           <groupId>org.keycloak</groupId>
           <artifactId>keycloak-model-api</artifactId>
-          <version>1.4.0.Final</version>
+          <version>1.8.0.Final</version>
         </dependency>
         
         <dependency>
           <groupId>org.keycloak</groupId>
           <artifactId>keycloak-adapter-core</artifactId>
-          <version>1.4.0.Final</version>
+          <version>1.8.0.Final</version>
+        </dependency>
+        
+        <dependency>
+          <groupId>org.keycloak</groupId>
+          <artifactId>keycloak-common</artifactId>
+          <version>1.8.0.Final</version>
         </dependency>
         
         <dependency>
           <groupId>org.keycloak</groupId>
           <artifactId>keycloak-account-api</artifactId>
-          <version>1.4.0.Final</version>
+          <version>1.8.0.Final</version>
         </dependency>
         
         <dependency>
           <groupId>org.keycloak</groupId>
           <artifactId>keycloak-events-api</artifactId>
-          <version>1.4.0.Final</version>
+          <version>1.8.0.Final</version>
         </dependency>
         
         <dependency>
           <groupId>org.keycloak</groupId>
           <artifactId>keycloak-admin-client</artifactId>
-          <version>1.4.0.Final</version>
+          <version>1.8.0.Final</version>
         </dependency>
                                                
 
@@ -159,4 +165,4 @@ The KeyCloak provider for users and groups management services provides the foll
 Notes
 -----
 * Java7+                   
-* This implementation has been tested for a KeyCloak version `1.4.0.Final`.                
+* This implementation has been tested for a KeyCloak version `1.8.0.Final`.                

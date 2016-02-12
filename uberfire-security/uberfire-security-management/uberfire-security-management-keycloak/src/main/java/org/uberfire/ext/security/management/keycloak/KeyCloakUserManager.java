@@ -235,7 +235,7 @@ public class KeyCloakUserManager extends BaseKeyCloakManager implements UserMana
 
     @Override
     public void destroy() throws Exception {
-
+        close();
     }
     
 }
