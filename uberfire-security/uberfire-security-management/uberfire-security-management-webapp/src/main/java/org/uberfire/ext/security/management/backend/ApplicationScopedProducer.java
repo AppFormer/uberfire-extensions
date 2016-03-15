@@ -21,7 +21,6 @@ import org.jboss.errai.security.shared.service.AuthenticationService;
 import org.uberfire.backend.server.IOWatchServiceNonDotImpl;
 import org.uberfire.commons.services.cdi.Startup;
 import org.uberfire.commons.services.cdi.StartupType;
-import org.uberfire.ext.security.server.RolesRegistry;
 import org.uberfire.io.IOService;
 import org.uberfire.io.impl.IOServiceDotFileImpl;
 import org.uberfire.security.authz.AuthorizationManager;
@@ -49,8 +48,6 @@ public class ApplicationScopedProducer {
     @PostConstruct
     public void setup() {
         ioService  = new IOServiceDotFileImpl( watchService );
-        RolesRegistry.get().registerRole( "admin" );
-        RolesRegistry.get().registerRole( "constrained" );
     }
 
     @Produces

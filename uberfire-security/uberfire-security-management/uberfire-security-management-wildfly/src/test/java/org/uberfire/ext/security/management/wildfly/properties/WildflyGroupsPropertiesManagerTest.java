@@ -24,6 +24,7 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.backend.server.security.RoleRegistry;
 import org.uberfire.ext.security.management.BaseTest;
 import org.uberfire.ext.security.management.api.AbstractEntityManager;
 import org.uberfire.ext.security.management.api.Capability;
@@ -32,7 +33,6 @@ import org.uberfire.ext.security.management.api.UserSystemManager;
 import org.uberfire.ext.security.management.api.exception.GroupNotFoundException;
 import org.uberfire.ext.security.management.api.exception.UnsupportedServiceCapabilityException;
 import org.uberfire.ext.security.management.util.SecurityManagementUtils;
-import org.uberfire.ext.security.server.RolesRegistry;
 
 import java.io.File;
 import java.net.URL;
@@ -58,7 +58,7 @@ public class WildflyGroupsPropertiesManagerTest extends BaseTest {
     @BeforeClass
     public static void initWorkspace() throws Exception {
         elHome = tempFolder.newFolder("uf-extensions-security-management-wildfly");
-        RolesRegistry.get().clear();
+        RoleRegistry.get().clear();
     }
     
     @Before

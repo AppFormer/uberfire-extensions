@@ -29,11 +29,11 @@ import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.uberfire.backend.server.security.RoleRegistry;
 import org.uberfire.commons.config.ConfigProperties;
 import org.uberfire.ext.security.management.BaseTest;
 import org.uberfire.ext.security.management.api.*;
 import org.uberfire.ext.security.management.api.exception.UserNotFoundException;
-import org.uberfire.ext.security.server.RolesRegistry;
 
 import java.io.File;
 import java.net.URL;
@@ -63,7 +63,7 @@ public class TomcatUserManagerTest extends BaseTest {
     @BeforeClass
     public static void initWorkspace() throws Exception {
         elHome = tempFolder.newFolder("uf-extensions-security-management-tomcat");
-        RolesRegistry.get().clear();
+        RoleRegistry.get().clear();
     }
 
     @Before
@@ -208,8 +208,8 @@ public class TomcatUserManagerTest extends BaseTest {
 
     @Test
     public void testAssignRoles() {
-        RolesRegistry.get().registerRole("role1");
-        RolesRegistry.get().registerRole("role3");
+        RoleRegistry.get().registerRole("role1");
+        RoleRegistry.get().registerRole("role3");
         final User user = mock(User.class);
         when(user.getIdentifier()).thenReturn("user1");
         when(user.getGroups()).thenReturn(new HashSet<Group>());
@@ -233,7 +233,7 @@ public class TomcatUserManagerTest extends BaseTest {
     // Note that role3 cannot be assigned as it's not registered in the Roles Registry.
     @Test
     public void testAssignRolesNotAllRegistered() {
-        RolesRegistry.get().registerRole("role1");
+        RoleRegistry.get().registerRole("role1");
         final User user = mock(User.class);
         when(user.getIdentifier()).thenReturn("user1");
         when(user.getGroups()).thenReturn(new HashSet<Group>());

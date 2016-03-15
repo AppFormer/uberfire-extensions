@@ -25,12 +25,12 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.uberfire.backend.server.security.RoleRegistry;
 import org.uberfire.ext.security.management.api.AbstractEntityManager;
 import org.uberfire.ext.security.management.api.GroupManager;
 import org.uberfire.ext.security.management.api.UserSystemManager;
 import org.uberfire.ext.security.management.api.exception.GroupNotFoundException;
 import org.uberfire.ext.security.management.impl.SearchRequestImpl;
-import org.uberfire.ext.security.server.RolesRegistry;
 
 import java.util.List;
 
@@ -53,10 +53,10 @@ public class UberfireRoleManagerTest {
     
     @Before
     public void setup() throws Exception {
-        RolesRegistry.get().clear();
-        RolesRegistry.get().registerRole( "regRole1" );
-        RolesRegistry.get().registerRole( "regRole2" );
-        RolesRegistry.get().registerRole( "regRole3" );
+        RoleRegistry.get().clear();
+        RoleRegistry.get().registerRole( "regRole1" );
+        RoleRegistry.get().registerRole( "regRole2" );
+        RoleRegistry.get().registerRole( "regRole3" );
         tested = new UberfireRoleManager();
         tested.initialize(userSystemManager);
     }
