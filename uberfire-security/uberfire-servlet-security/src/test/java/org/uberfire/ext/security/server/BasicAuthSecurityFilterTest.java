@@ -57,7 +57,7 @@ public class BasicAuthSecurityFilterTest {
     @Test
     public void testIndependentSessionInvalidated() throws Exception {
 
-        SessionProvider sessionProvider = new SessionProvider(httpSession, 1);
+        final SessionProvider sessionProvider = new SessionProvider(httpSession, 1);
 
         when(authenticationService.getUser()).thenReturn(new UserImpl("testUser"));
         when(request.getSession(anyBoolean())).then(new Answer<HttpSession>() {
@@ -76,7 +76,7 @@ public class BasicAuthSecurityFilterTest {
     @Test
     public void testExistingSessionNotInvalidated() throws Exception {
 
-        SessionProvider sessionProvider = new SessionProvider(httpSession);
+        final SessionProvider sessionProvider = new SessionProvider(httpSession);
 
         when(authenticationService.getUser()).thenReturn(new UserImpl("testUser"));
         when(request.getSession(anyBoolean())).then(new Answer<HttpSession>() {
