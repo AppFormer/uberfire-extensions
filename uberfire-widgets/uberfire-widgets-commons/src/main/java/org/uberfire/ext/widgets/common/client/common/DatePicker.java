@@ -15,14 +15,19 @@
  */
 package org.uberfire.ext.widgets.common.client.common;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasEnabled;
@@ -99,18 +104,29 @@ public class DatePicker extends Composite
 
     private final boolean allowEmptyValues;
 
-    private final org.gwtbootstrap3.extras.datepicker.client.ui.DatePicker datePicker = new org.gwtbootstrap3.extras.datepicker.client.ui.DatePicker();
+    private final org.gwtbootstrap3.extras.datepicker.client.ui.DatePicker datePicker;
 
     public DatePicker() {
         this( true );
     }
 
+    /**
+     * Basic constuctor of uberfire datePicker without setting the datepicker container and without setting the hide
+     * handler to manage the interaction with org.gwtbootstrap3.extras.datepicker.client.ui.DatePicker popup
+     * @param datePicker
+     */
+    public DatePicker(org.gwtbootstrap3.extras.datepicker.client.ui.DatePicker datePicker) {
+        this.datePicker = datePicker;
+        this.allowEmptyValues = true;
+    }
+
     public DatePicker( final boolean allowEmptyValues ) {
+        datePicker = GWT.create(org.gwtbootstrap3.extras.datepicker.client.ui.DatePicker.class);
         this.allowEmptyValues = allowEmptyValues;
         datePicker.setContainer( RootPanel.get() );
 
         datePicker.setAutoClose( true );
-        datePicker.setFormat( DatePickerFormatUtilities.convertToBS3DateFormat( gwtDateFormat ) );
+        setFormat(gwtDateFormat);
 
         //When the popup Date Picker component is hidden assert empty values
         datePicker.addHideHandler( new HideHandler() {
@@ -127,21 +143,21 @@ public class DatePicker extends Composite
             }
         } );
 
-        initWidget( datePicker );
+        initWidget(datePicker);
     }
 
     public void setContainer( final Widget container ) {
-        datePicker.setContainer( container );
+        datePicker.setContainer(container);
     }
 
     @Override
     public void setAutoClose( final boolean autoClose ) {
-        datePicker.setAutoClose( autoClose );
+        datePicker.setAutoClose(autoClose);
     }
 
     @Override
     public void onShow( final Event e ) {
-        datePicker.onShow( e );
+        datePicker.onShow(e);
     }
 
     @Override
@@ -151,57 +167,57 @@ public class DatePicker extends Composite
 
     @Override
     public void onHide( final Event e ) {
-        datePicker.onHide( e );
+        datePicker.onHide(e);
     }
 
     @Override
     public HandlerRegistration addHideHandler( final HideHandler hideHandler ) {
-        return datePicker.addHideHandler( hideHandler );
+        return datePicker.addHideHandler(hideHandler);
     }
 
     @Override
     public void onChangeDate( final Event e ) {
-        datePicker.onChangeDate( e );
+        datePicker.onChangeDate(e);
     }
 
     @Override
     public HandlerRegistration addChangeDateHandler( final ChangeDateHandler changeDateHandler ) {
-        return datePicker.addChangeDateHandler( changeDateHandler );
+        return datePicker.addChangeDateHandler(changeDateHandler);
     }
 
     @Override
     public void onChangeYear( final Event e ) {
-        datePicker.onChangeYear( e );
+        datePicker.onChangeYear(e);
     }
 
     @Override
     public HandlerRegistration addChangeYearHandler( final ChangeYearHandler changeYearHandler ) {
-        return datePicker.addChangeYearHandler( changeYearHandler );
+        return datePicker.addChangeYearHandler(changeYearHandler);
     }
 
     @Override
     public void onChangeMonth( final Event e ) {
-        datePicker.onChangeMonth( e );
+        datePicker.onChangeMonth(e);
     }
 
     @Override
     public HandlerRegistration addChangeMonthHandler( final ChangeMonthHandler changeMonthHandler ) {
-        return datePicker.addChangeMonthHandler( changeMonthHandler );
+        return datePicker.addChangeMonthHandler(changeMonthHandler);
     }
 
     @Override
     public void onClearDate( final Event e ) {
-        datePicker.onClearDate( e );
+        datePicker.onClearDate(e);
     }
 
     @Override
     public HandlerRegistration addClearDateHandler( final ClearDateHandler outOfRangeHandler ) {
-        return datePicker.addClearDateHandler( outOfRangeHandler );
+        return datePicker.addClearDateHandler(outOfRangeHandler);
     }
 
     @Override
     public void setDaysOfWeekDisabled( final DatePickerDayOfWeek... daysOfWeekDisabled ) {
-        datePicker.setDaysOfWeekDisabled( daysOfWeekDisabled );
+        datePicker.setDaysOfWeekDisabled(daysOfWeekDisabled);
     }
 
     @Override
@@ -211,17 +227,17 @@ public class DatePicker extends Composite
 
     @Override
     public void setEnabled( final boolean enabled ) {
-        datePicker.setEnabled( enabled );
+        datePicker.setEnabled(enabled);
     }
 
     @Override
     public void setEndDate( final Date endDate ) {
-        datePicker.setEndDate( endDate );
+        datePicker.setEndDate(endDate);
     }
 
     @Override
     public void setEndDate( final String endDate ) {
-        datePicker.setEndDate( endDate );
+        datePicker.setEndDate(endDate);
     }
 
     @Override
@@ -231,19 +247,81 @@ public class DatePicker extends Composite
 
     @Override
     public void setForceParse( final boolean forceParse ) {
-        datePicker.setForceParse( forceParse );
+        datePicker.setForceParse(forceParse);
     }
 
     /**
      * Set the format of the Date shown in the TextBox component.
      * This is converted to BS3's Date Format that the underlying jQuery-based BS3 DatePicker
      * uses to convert values in the TextBox to selections in the popup date picker element.
-     * @param gwtDateFormat
+     * @param dateFormat
      */
-    public void setFormat( final String gwtDateFormat ) {
-        this.gwtDateFormat = gwtDateFormat;
-        this.gwtDateTimeFormat = DateTimeFormat.getFormat( this.gwtDateFormat );
-        datePicker.setFormat( DatePickerFormatUtilities.convertToBS3DateFormat( gwtDateFormat ) );
+    public void setFormat( final String dateFormat ) {
+        setFormat(getLocaleName(), dateFormat);
+    }
+
+    public void setFormat(String currentLocale,  final String dateFormat) {
+        String currentLang = getLangFromLocale(currentLocale);
+        this.gwtDateFormat = removeMonthNamesFromDateFormatES_DE(currentLang, dateFormat);
+        this.gwtDateTimeFormat = DateTimeFormat.getFormat(this.gwtDateFormat);
+        datePicker.setLanguage(DatePickerLanguage.valueOf(currentLang.toUpperCase()));
+        datePicker.setFormat(DatePickerFormatUtilities.convertToBS3DateFormat(this.gwtDateFormat));
+    }
+
+    /**.
+     * There are incompatibilities between DateTimeFormatInfoImpl and DatePickerResourceBundles for es and de locales.
+     * This function modify in that cases the dateFormat to avoid show the name of the months
+     * TODO this is a temportary fix but this behaviour has to be reviewed for locales "es" and "de" showing the name of the month.
+     * @param activeLocale
+     * @param dateFormat
+     * @return the dateformat to be applied depending of locale. In case of es and de, avoiding show the name of month
+     */
+    private String removeMonthNamesFromDateFormatES_DE(String activeLocale, String dateFormat){
+        if (activeLocale.equals("es")) {
+            //incompatible date formatting DateTimeFormatInfoImpl_de and DatePickerClientBundle.INSTANCE.es()
+            return getDateFormatWithoutMonthNames(dateFormat);
+        }  else if (activeLocale.equals("de")) {
+            //incompatible date formatting DateTimeFormatInfoImpl_de and DatePickerClientBundle.INSTANCE.de()
+            return getDateFormatWithoutMonthNames(dateFormat);
+        }
+
+        return dateFormat;
+    }
+
+    static String getLocaleName() {
+        final LocaleInfo locale = LocaleInfo.getCurrentLocale();
+        final String localeName = locale.getLocaleName();
+        return localeName;
+    }
+
+
+    protected String getLangFromLocale(String localeName) {
+        if ( localeName == null || localeName.isEmpty() ) {
+            return "en";
+        }
+        if ( localeName.equalsIgnoreCase( "default" ) ) {
+            return "en";
+        }
+        String language = localeName.toLowerCase();
+        if ( language.contains( "_" ) ) {
+            language = language.substring( 0,
+                    language.indexOf( "_" ) );
+        }
+        if ( language.equals( "en" ) ) {
+            return "en";
+        }
+        return language;
+    }
+
+    /**
+     * Modifies the format passed as parameter, to avoid show month names. (MMMM -> MM and MMM->MM)
+     * @param format gwt Date Format
+     * @return the date formatting pattern with month numbers instead names
+     */
+    private String getDateFormatWithoutMonthNames(String format){
+        String formatWithoutMonthNames = format.replace("MMMM","MM");
+        formatWithoutMonthNames = formatWithoutMonthNames.replace("MMM","MM");
+        return formatWithoutMonthNames;
     }
 
     @Override
