@@ -147,4 +147,8 @@ public interface CommonConstants
 
     String Minute();
 
+    String Of();
+
+    String Over();
+
 }
