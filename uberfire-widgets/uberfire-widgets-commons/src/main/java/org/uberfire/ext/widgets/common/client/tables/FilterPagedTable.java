@@ -138,7 +138,7 @@ public class FilterPagedTable<T>
             close.setType( ButtonType.LINK );
             close.setIcon( IconType.TIMES );
             close.setSize( ButtonSize.EXTRA_SMALL );
-            close.setTitle( "close " + gridHeader );
+            close.setTitle( closeText() + " " + gridHeader );
             close.getElement().getStyle().setVerticalAlign( Style.VerticalAlign.TEXT_TOP );
             close.addClickHandler( new ClickHandler() {
                 @Override
@@ -272,5 +272,9 @@ public class FilterPagedTable<T>
         }
         navTabs.add( tabListItem );
         tabContent.add( tabPane );
+    }
+
+    private String closeText() {
+        return CommonConstants.INSTANCE.Close();
     }
 }
