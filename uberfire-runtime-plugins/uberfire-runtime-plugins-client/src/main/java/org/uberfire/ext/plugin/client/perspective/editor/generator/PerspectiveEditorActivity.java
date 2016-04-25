@@ -38,10 +38,6 @@ public class PerspectiveEditorActivity implements PerspectiveActivity {
     private PerspectiveEditorScreenActivity screen;
     private PlaceRequest place;
 
-    private static final Collection<String> ROLES = Collections.emptyList();
-
-    private static final Collection<String> TRAITS = Collections.emptyList();
-
     public PerspectiveEditorActivity(final LayoutTemplate editor,
             PerspectiveEditorScreenActivity screen) {
         this.editor = editor;
@@ -122,20 +118,5 @@ public class PerspectiveEditorActivity implements PerspectiveActivity {
     @Override
     public ToolBar getToolBar() {
         return null;
-    }
-
-    @Override
-    public String getSignatureId() {
-        return editor.getName();
-    }
-
-    @Override
-    public Collection<String> getRoles() {
-        return ROLES;
-    }
-
-    @Override
-    public Collection<String> getTraits() {
-        return TRAITS;
     }
 }

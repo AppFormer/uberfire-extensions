@@ -18,12 +18,10 @@ package org.uberfire.ext.security.management.client.perspectives;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
-import org.uberfire.ext.security.management.api.UserSystemManager;
 import org.uberfire.ext.security.management.client.resources.i18n.UsersManagementWorkbenchConstants;
 import org.uberfire.ext.security.management.client.screens.explorer.GroupsExplorerScreen;
 import org.uberfire.ext.security.management.client.screens.home.GroupsManagementHomeScreen;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
-import org.uberfire.security.annotations.Roles;
 import org.uberfire.workbench.model.CompassPosition;
 import org.uberfire.workbench.model.PanelDefinition;
 import org.uberfire.workbench.model.PerspectiveDefinition;
@@ -33,7 +31,6 @@ import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 
 import javax.enterprise.context.ApplicationScoped;
 
-@Roles({UserSystemManager.ADMIN})
 @ApplicationScoped
 @WorkbenchPerspective(identifier = "GroupsManagementPerspective", isTransient = false)
 public class GroupsManagementPerspective {
