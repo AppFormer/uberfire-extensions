@@ -87,6 +87,19 @@ public final class KObjectUtil {
             public String getKey() {
                 return path.toUri().toString();
             }
+
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder( "KObject{" +
+                                                              ", key='" + getKey() + '\'' +
+                                                              ", id='" + getId() + '\'' +
+                                                              ", type=" + getType() +
+                                                              ", clusterId='" + getClusterId() + '\'' +
+                                                              ", segmentId='" + getSegmentId() + '\'' );
+                sb.append( '}' );
+
+                return sb.toString();
+            }
         };
     }
 
