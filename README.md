@@ -1,4 +1,4 @@
-uberfire-extensions
-===================
+Starting from version 0.9.x the code was moved directly into uberfire repository (https://github.com/uberfire/uberfire)
+=======================================================================================================================
 
-Extensions to UberFire framework
+Older branches (e.g. 0.8.x and 0.7.x) are still kept in this repository.
