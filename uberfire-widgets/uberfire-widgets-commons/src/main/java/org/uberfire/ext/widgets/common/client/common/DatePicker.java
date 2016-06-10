@@ -103,6 +103,8 @@ public class DatePicker extends Composite
 
     private final org.gwtbootstrap3.extras.datepicker.client.ui.DatePicker datePicker;
 
+    private String localeName;
+
     public DatePicker() {
         this( true );
     }
@@ -123,6 +125,7 @@ public class DatePicker extends Composite
         datePicker.setContainer( RootPanel.get() );
 
         datePicker.setAutoClose( true );
+        setLocaleName();
         setFormat(gwtDateFormat);
 
         //When the popup Date Picker component is hidden assert empty values
@@ -263,33 +266,30 @@ public class DatePicker extends Composite
     public void setFormat( final String gwtDateFormat ) {
         this.gwtDateFormat = gwtDateFormat;
         this.gwtDateTimeFormat = DateTimeFormat.getFormat( this.gwtDateFormat );
-        String currentLang = getLangFromLocale(getLocaleName());
-        datePicker.setLanguage(DatePickerLanguage.valueOf(currentLang.toUpperCase()));
+        datePicker.setLanguage(DatePickerLanguage.valueOf(getLocaleName().toUpperCase()));
         datePicker.setFormat( DatePickerFormatUtilities.convertToBS3DateFormat( gwtDateFormat ) );
     }
 
-    static String getLocaleName() {
-        final LocaleInfo locale = LocaleInfo.getCurrentLocale();
-        final String localeName = locale.getLocaleName();
+    public String getLocaleName() {
+        if (localeName == null || localeName.isEmpty()) {
+            return "EN";
+        }
+        if (localeName.equalsIgnoreCase("default")) {
+            return "EN";
+        }
         return localeName;
     }
 
-    protected String getLangFromLocale(String localeName) {
-        if (localeName == null || localeName.isEmpty()) {
-            return "en";
+    public void setLocaleName() {
+        localeName = LocaleInfo.getCurrentLocale().getLocaleName();
+    }
+
+    public void setLocaleName(String localeName) {
+        if(localeName!=null) {
+            this.localeName = localeName;
+        } else {
+            this.localeName = "";
         }
-        if (localeName.equalsIgnoreCase("default")) {
-            return "en";
-        }
-        String language = localeName.toLowerCase();
-        if (language.contains("_")) {
-            language = language.substring(0,
-                    language.indexOf("_"));
-        }
-        if (language.equals("en")) {
-            return "en";
-        }
-        return language;
     }
 
     @Override
