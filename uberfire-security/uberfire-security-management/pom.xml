@@ -35,6 +35,7 @@
     <module>uberfire-security-management-backend</module>
     <module>uberfire-security-management-keycloak</module>
     <module>uberfire-security-management-wildfly</module>
+    <module>uberfire-security-management-wildfly10</module>
     <module>uberfire-security-management-tomcat</module>
     <module>uberfire-security-management-client</module>
     <module>uberfire-widgets-security-management</module>

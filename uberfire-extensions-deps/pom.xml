@@ -43,6 +43,7 @@
     <version.org.jboss.resteasy.client>3.0.9.Final</version.org.jboss.resteasy.client>
     <version.org.apache.tomcat>7.0.61</version.org.apache.tomcat>
     <version.org.jboss.wildfly>8.2.0.Final</version.org.jboss.wildfly>
+    <version.org.wildfly.core>2.1.0.Final</version.org.wildfly.core>
   </properties>
 
   <dependencyManagement>
@@ -138,17 +139,28 @@
         <version>${version.org.jboss.resteasy.client}</version>
       </dependency>
       
-      <!-- Uberfire Security Management - EAP / Wdilfly. -->
+      <!-- Uberfire Security Management - EAP 6 / WildFly 8. -->
       <dependency>
         <groupId>org.wildfly</groupId>
         <artifactId>wildfly-controller-client</artifactId>
         <version>${version.org.jboss.wildfly}</version>
       </dependency>
-
       <dependency>
         <groupId>org.wildfly</groupId>
         <artifactId>wildfly-domain-management</artifactId>
         <version>${version.org.jboss.wildfly}</version>
+      </dependency>
+      <!-- Uberfire Security Management - EAP 7 / WildFly 10. -->
+      <dependency>
+        <groupId>org.wildfly.core</groupId>
+        <artifactId>wildfly-controller-client</artifactId>
+        <version>${version.org.wildfly.core}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.wildfly.core</groupId>
+        <artifactId>wildfly-domain-management</artifactId>
+        <version>${version.org.wildfly.core}</version>
       </dependency>
 
       <!-- Uberfire Security Management - Tomcat. -->
