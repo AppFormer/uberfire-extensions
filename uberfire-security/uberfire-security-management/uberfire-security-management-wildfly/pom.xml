@@ -18,103 +18,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>uberfire-security-management</artifactId>
     <groupId>org.uberfire</groupId>
+    <artifactId>uberfire-security-management</artifactId>
     <version>0.9.0-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
   <artifactId>uberfire-security-management-wildfly</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
 
-  <name>Uberfire Security Management - Provider Implementation for Wildfly</name>
-  <description>Uberfire Security Management - Provider Implementation for Wildfly</description>
+  <name>Uberfire Security Management - Provider Implementations for different WildFly versions</name>
+  <description>Uberfire Security Management - Provider Implementations for different WildFly versions</description>
+  <modules>
+    <module>uberfire-security-management-wildfly-commons</module>
+    <module>uberfire-security-management-wildfly8</module>
+    <module>uberfire-security-management-wildfly10</module>
+  </modules>
 
-  <dependencies>
-
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-commons</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-security-management-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-security-management-backend</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.inject</groupId>
-      <artifactId>javax.inject</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-javax-enterprise</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-security-server</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-bus</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-
-    <!-- 
-      NOTE:
-      If deploying into a JBoss Wildfly or EAP, there is no need to include these dependencies, 
-      as they are provided by container's base modules if you use the jboss-deployment-descriptor. 
-      -->
-    <dependency>
-      <groupId>org.wildfly</groupId>
-      <artifactId>wildfly-controller-client</artifactId>
-      <optional>true</optional>  
-    </dependency>
-
-    <dependency>
-      <groupId>org.wildfly</groupId>
-      <artifactId>wildfly-domain-management</artifactId>
-      <optional>true</optional>
-    </dependency>
-
-
-    <!-- Testing. -->
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-security-management-backend</artifactId>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-  </dependencies>
 
 </project>
