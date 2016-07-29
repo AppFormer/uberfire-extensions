@@ -32,6 +32,11 @@
 
   <name>Extensions to UberFire</name>
 
+  <properties>
+    <!-- JDK8 needed to build the project (because of WildFly 10 integration), but Java 6 still support for backend -->
+    <jdk.min.version>1.8</jdk.min.version>
+  </properties>
+
   <modules>
     <module>uberfire-extensions-deps</module>
     <module>uberfire-extensions-bom</module>

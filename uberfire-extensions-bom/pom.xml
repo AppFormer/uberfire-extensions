@@ -328,13 +328,46 @@
 
       <dependency>
         <groupId>org.uberfire</groupId>
-        <artifactId>uberfire-security-management-wildfly</artifactId>
+        <artifactId>uberfire-security-management-wildfly-commons</artifactId>
         <version>${project.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.uberfire</groupId>
-        <artifactId>uberfire-security-management-wildfly</artifactId>
+        <artifactId>uberfire-security-management-wildfly-commons</artifactId>
+        <version>${project.version}</version>
+        <classifier>sources</classifier>
+      </dependency>
+
+      <dependency>
+        <groupId>org.uberfire</groupId>
+        <artifactId>uberfire-security-management-wildfly-commons</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.uberfire</groupId>
+        <artifactId>uberfire-security-management-wildfly8</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.uberfire</groupId>
+        <artifactId>uberfire-security-management-wildfly8</artifactId>
+        <version>${project.version}</version>
+        <classifier>sources</classifier>
+      </dependency>
+
+      <dependency>
+        <groupId>org.uberfire</groupId>
+        <artifactId>uberfire-security-management-wildfly10</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.uberfire</groupId>
+        <artifactId>uberfire-security-management-wildfly10</artifactId>
         <version>${project.version}</version>
         <classifier>sources</classifier>
       </dependency>

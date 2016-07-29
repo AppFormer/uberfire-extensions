@@ -106,7 +106,7 @@
 
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-security-management-wildfly</artifactId>
+      <artifactId>uberfire-security-management-wildfly8</artifactId>
     </dependency>
 
     <dependency>
