@@ -128,4 +128,6 @@ public interface CommonConstants
     String ScreenConfiguration();
 
     String PlaceName();
+
+    String PerspectiveEditor();
 }
