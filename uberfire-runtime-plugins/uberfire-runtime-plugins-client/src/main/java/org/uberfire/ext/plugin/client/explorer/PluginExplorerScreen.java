@@ -66,6 +66,8 @@ public class PluginExplorerScreen
 
     private static ViewBinder uiBinder = GWT.create( ViewBinder.class );
 
+    private CommonConstants constants = CommonConstants.INSTANCE;
+
     @UiField
     FlowPanel htmlPanel;
 
@@ -92,7 +94,7 @@ public class PluginExplorerScreen
 
     @WorkbenchPartTitle
     public String getTitle() {
-        return "Plugins Explorer";
+        return constants.PluginsExplorer();
     }
 
     @WorkbenchMenu
