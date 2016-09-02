@@ -29,6 +29,7 @@ import org.uberfire.client.annotations.WorkbenchPartTitleDecoration;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.workbench.type.ClientResourceType;
 import org.uberfire.ext.editor.commons.client.file.SaveOperationService;
+import org.uberfire.ext.plugin.client.resources.i18n.CommonConstants;
 import org.uberfire.ext.plugin.client.type.EditorPluginResourceType;
 import org.uberfire.ext.plugin.model.Media;
 import org.uberfire.ext.plugin.model.PluginContent;
@@ -70,7 +71,7 @@ public class EditorPlugInEditorPresenter
 
     @WorkbenchPartTitle
     public String getTitleText() {
-        return "Editor PlugIn [" + this.plugin.getName() + "]";
+        return CommonConstants.INSTANCE.EditorPluginEditor() + " [" + this.plugin.getName() + "]";
     }
 
     @WorkbenchMenu

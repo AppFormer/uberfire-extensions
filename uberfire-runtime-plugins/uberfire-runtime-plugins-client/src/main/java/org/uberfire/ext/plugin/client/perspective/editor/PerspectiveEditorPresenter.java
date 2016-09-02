@@ -166,7 +166,7 @@ public class PerspectiveEditorPresenter extends BaseEditor {
 
     @WorkbenchPartTitle
     public String getTitleText() {
-        return "Perspective Editor [" + plugin.getName() + "]";
+        return org.uberfire.ext.plugin.client.resources.i18n.CommonConstants.INSTANCE.PerspectiveEditor() + " [" + plugin.getName() + "]";
     }
 
     @WorkbenchMenu

@@ -102,6 +102,7 @@ public class PluginNavList extends Composite {
 
     public void setup( final Collection<Plugin> plugins ) {
         final Map<ClientResourceType, Set<Activity>> classified = pluginsInfo.getClassifiedPlugins( plugins );
+        final Map<ClientResourceType, String> labelsByResourceType = pluginsInfo.getPluginsTypeLabels();
 
         pluginsList.clear();
 
@@ -130,7 +131,7 @@ public class PluginNavList extends Composite {
             collapse.add( body );
 
             pluginsList.add( new Panel() {{
-                add( new TriggerWidget( entry.getKey().getIcon(), entry.getKey().getDescription() ) {{
+                add( new TriggerWidget( entry.getKey().getIcon(), labelsByResourceType.get( entry.getKey() ) ) {{
                     setDataToggle( Toggle.COLLAPSE );
                     setDataParent( pluginsList.getId() );
                     setDataTargetWidget( collapse );
@@ -208,5 +209,4 @@ public class PluginNavList extends Composite {
             nav.removeFromParent();
         }
     }
-
 }
