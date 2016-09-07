@@ -26,6 +26,7 @@ import org.mockito.Matchers;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.workbench.type.ClientResourceType;
+import org.uberfire.ext.editor.commons.client.history.VersionRecordManager;
 import org.uberfire.ext.plugin.model.Media;
 import org.uberfire.ext.plugin.model.PluginContent;
 import org.uberfire.ext.plugin.model.PluginSimpleContent;
@@ -53,9 +54,9 @@ public class RuntimePluginBaseEditorTest {
     public void setup() {
         pluginServices = mock( PluginServices.class );
         callerMock = new CallerMock<PluginServices>( pluginServices );
-        editor = createRuntimePluginBaseEditor();
         successCallBack = mock( RemoteCallback.class );
         baseEditorView = mock( RuntimePluginBaseView.class );
+        editor = createRuntimePluginBaseEditor();
     }
 
     @Test
@@ -76,9 +77,15 @@ public class RuntimePluginBaseEditorTest {
         assertNotNull( editor.getOriginalHash() );
     }
 
+    @Test
+    public void saveCommandTest() {
+        editor.getSaveCommand().execute( "commitMessage" );
+        verify( baseEditorView ).onSave();
+    }
+
     private RuntimePluginBaseEditor createRuntimePluginBaseEditor() {
 
-        return new RuntimePluginBaseEditor( baseEditorView ) {
+        return  new RuntimePluginBaseEditor( baseEditorView ) {
             @Override
             protected PluginType getPluginType() {
                 return PluginType.DYNAMIC_MENU;
@@ -107,6 +114,15 @@ public class RuntimePluginBaseEditorTest {
             @Override
             public PluginSimpleContent getContent() {
                 return mock( PluginSimpleContent.class );
+            }
+
+            @Override
+            protected RemoteCallback<Path> getSaveSuccessCallback( final int newHash ) {
+                return new RemoteCallback<Path>() {
+                    @Override
+                    public void callback( final Path path ) {
+                    }
+                };
             }
         };
 
