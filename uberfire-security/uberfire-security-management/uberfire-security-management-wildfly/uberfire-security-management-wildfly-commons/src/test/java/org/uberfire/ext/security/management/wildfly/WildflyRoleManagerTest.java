@@ -4,9 +4,7 @@ import org.jboss.errai.security.shared.api.Role;
 import org.jboss.errai.security.shared.api.RoleImpl;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.uberfire.ext.security.server.RolesRegistry;
+import org.uberfire.backend.server.security.RoleRegistry;
 
 import java.util.Set;
 
@@ -19,14 +17,14 @@ public class WildflyRoleManagerTest {
 
     @Before
     public void setup() {
-        RolesRegistry.get().clear();
+        RoleRegistry.get().clear();
         tested = new WildflyRoleManager();
     }
 
     @Test
     public void testGetRegisteredRoles() {
-        RolesRegistry.get().registerRole( "role1" );
-        RolesRegistry.get().registerRole("role2");
+        RoleRegistry.get().registerRole( "role1" );
+        RoleRegistry.get().registerRole("role2");
         Set<Role> roles = tested.getRegisteredRoles();
         assertNotNull(roles);
         assertTrue(roles.size() == 3);

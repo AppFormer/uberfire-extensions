@@ -25,7 +25,7 @@ import org.jboss.errai.security.shared.api.identity.UserImpl;
 import org.uberfire.ext.security.management.api.Capability;
 import org.uberfire.ext.security.management.api.UserSystemManager;
 import org.uberfire.ext.security.management.api.exception.UserNotFoundException;
-import org.uberfire.ext.security.server.RolesRegistry;
+import org.uberfire.backend.server.security.RoleRegistry;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -112,7 +112,7 @@ public class SecurityManagementUtils {
     }
     
     public static Set<Role> getRegisteredRoles() {
-        Set<Role> registered = RolesRegistry.get().getRegisteredRoles();
+        Set<Role> registered = RoleRegistry.get().getRegisteredRoles();
         Set<Role> result = new HashSet<Role>(registered.size() + 1);
         result.addAll(registered);
         result.add(createRole(UserSystemManager.ADMIN));
@@ -120,7 +120,7 @@ public class SecurityManagementUtils {
     }
 
     public static Set<String> getRegisteredRoleNames() {
-        Set<Role> registered = RolesRegistry.get().getRegisteredRoles();
+        Set<Role> registered = RoleRegistry.get().getRegisteredRoles();
         Set<String> result = new HashSet<String>(registered.size() + 1);
         result.addAll(rolesToString(registered));
         result.add(UserSystemManager.ADMIN);
