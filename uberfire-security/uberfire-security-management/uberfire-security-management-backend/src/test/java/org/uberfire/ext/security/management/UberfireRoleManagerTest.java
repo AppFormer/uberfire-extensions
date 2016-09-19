@@ -30,8 +30,7 @@ import org.uberfire.ext.security.management.api.GroupManager;
 import org.uberfire.ext.security.management.api.UserSystemManager;
 import org.uberfire.ext.security.management.api.exception.GroupNotFoundException;
 import org.uberfire.ext.security.management.impl.SearchRequestImpl;
-import org.uberfire.ext.security.server.RolesRegistry;
-
+import org.uberfire.backend.server.security.RoleRegistry;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -53,10 +52,10 @@ public class UberfireRoleManagerTest {
     
     @Before
     public void setup() throws Exception {
-        RolesRegistry.get().clear();
-        RolesRegistry.get().registerRole( "regRole1" );
-        RolesRegistry.get().registerRole( "regRole2" );
-        RolesRegistry.get().registerRole( "regRole3" );
+        RoleRegistry.get().clear();
+        RoleRegistry.get().registerRole( "regRole1" );
+        RoleRegistry.get().registerRole( "regRole2" );
+        RoleRegistry.get().registerRole( "regRole3" );
         tested = new UberfireRoleManager();
         tested.initialize(userSystemManager);
     }

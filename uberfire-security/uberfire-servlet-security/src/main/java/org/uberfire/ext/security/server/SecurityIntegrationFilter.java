@@ -16,24 +16,20 @@
 
 package org.uberfire.ext.security.server;
 
+import org.jboss.errai.marshalling.server.MappingContextSingleton;
+import org.uberfire.backend.server.security.RoleRegistry;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-
-import org.jboss.errai.marshalling.server.MappingContextSingleton;
 
 public class SecurityIntegrationFilter implements Filter {
 
     public static final String PROBE_ROLES_INIT_PARAM = "probe-for-roles";
 
-    private static final ThreadLocal<HttpServletRequest> requests = new ThreadLocal<HttpServletRequest>();
+    static final ThreadLocal<HttpServletRequest> requests = new ThreadLocal<HttpServletRequest>();
 
     @Override
     public void init( FilterConfig filterConfig ) throws ServletException {
@@ -42,7 +38,7 @@ public class SecurityIntegrationFilter implements Filter {
         String commaSeparatedRoles = filterConfig.getInitParameter( PROBE_ROLES_INIT_PARAM );
         if ( commaSeparatedRoles != null ) {
             for ( final String role : Collections.unmodifiableList( Arrays.asList( commaSeparatedRoles.split( "," ) ) ) ) {
-                RolesRegistry.get().registerRole( role );
+                RoleRegistry.get().registerRole( role );
             }
         }
     }
