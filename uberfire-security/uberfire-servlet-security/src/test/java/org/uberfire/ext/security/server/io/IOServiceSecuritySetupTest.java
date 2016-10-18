@@ -42,6 +42,8 @@ public class IOServiceSecuritySetupTest {
 
         assertTrue( PriorityDisposableRegistry.getDisposables().contains( service ) );
 
+        assertTrue( PriorityDisposableRegistry.getDisposables().contains( service ) );
+
         try {
             service.startBatch( fs );
         } catch ( Exception e ) {
