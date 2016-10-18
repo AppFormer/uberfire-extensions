@@ -24,12 +24,16 @@ public class GridPreferencesStore {
 
   private GridGlobalPreferences globalPreferences;
   private List<GridColumnPreference> columnPreferences = new ArrayList<GridColumnPreference>();
+  private int pageSizePreferences;
 
   public GridPreferencesStore() {
   }
 
   public GridPreferencesStore(GridGlobalPreferences globalPreferences) {
     this.globalPreferences = globalPreferences;
+    if(globalPreferences!=null) {
+      this.pageSizePreferences= globalPreferences.getPageSize();
+    }
   }
 
   public GridGlobalPreferences getGlobalPreferences() {
@@ -47,5 +51,17 @@ public class GridPreferencesStore {
   public void resetGridColumnPreferences(){
     columnPreferences.clear();
   }
+  public void resetPageSizePreferences(){
+    if(globalPreferences!=null) {
+      this.pageSizePreferences= globalPreferences.getPageSize();
+    }
+  }
 
+  public int getPageSizePreferences() {
+    return pageSizePreferences;
+  }
+
+  public void setPageSizePreferences( int pageSizePreferences ) {
+    this.pageSizePreferences = pageSizePreferences;
+  }
 }
