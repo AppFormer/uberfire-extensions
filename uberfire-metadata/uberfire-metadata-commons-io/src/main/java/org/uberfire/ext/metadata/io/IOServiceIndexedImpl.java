@@ -18,8 +18,10 @@ package org.uberfire.ext.metadata.io;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +39,7 @@ import org.uberfire.io.impl.IOServiceDotFileImpl;
 import org.uberfire.java.nio.IOException;
 import org.uberfire.java.nio.base.FSPath;
 import org.uberfire.java.nio.base.WatchContext;
+import org.uberfire.java.nio.base.dotfiles.DotFileUtils;
 import org.uberfire.java.nio.file.DeleteOption;
 import org.uberfire.java.nio.file.DirectoryNotEmptyException;
 import org.uberfire.java.nio.file.FileSystem;
@@ -52,8 +55,9 @@ import org.uberfire.java.nio.file.WatchService;
 import org.uberfire.java.nio.file.attribute.FileAttribute;
 import org.uberfire.java.nio.file.attribute.FileAttributeView;
 
-import static org.uberfire.commons.validation.Preconditions.*;
-import static org.uberfire.java.nio.file.StandardWatchEventKind.*;
+import static org.uberfire.commons.validation.Preconditions.checkNotNull;
+import static org.uberfire.java.nio.file.StandardWatchEventKind.ENTRY_CREATE;
+import static org.uberfire.java.nio.file.StandardWatchEventKind.ENTRY_MODIFY;
 
 public class IOServiceIndexedImpl extends IOServiceDotFileImpl {
 
@@ -261,6 +265,18 @@ public class IOServiceIndexedImpl extends IOServiceDotFileImpl {
 
                         @Override
                         public void run() {
+                            // Get a set of "real paths" to be indexed. The "dot path" associated with the "real path"
+                            // is automatically indexed because the "dot path" contains content for FileAttributeView(s)
+                            // linked to the "real path".
+                            final Set<Path> eventRealPaths = new HashSet<>();
+                            for (WatchEvent event : events) {
+                                final WatchContext context = ((WatchContext) event.context());
+                                final Path path = context.getPath();
+                                if (!path.getFileName().toString().startsWith(".")) {
+                                    eventRealPaths.add(path);
+                                }
+                            }
+
                             for ( WatchEvent object : events ) {
                                 if ( isDisposed() ) {
                                     return;
@@ -269,7 +285,16 @@ public class IOServiceIndexedImpl extends IOServiceDotFileImpl {
                                     final WatchContext context = ( (WatchContext) object.context() );
                                     if ( object.kind() == ENTRY_MODIFY || object.kind() == ENTRY_CREATE ) {
 
-                                        final Path path = context.getPath();
+                                        // If the path to be indexed is a "dot path" but does not have an associated
+                                        // "real path" index the "real path" instead. This ensures when only a
+                                        // "dot path" is updated the FileAttributeView(s) are re-indexed.
+                                        Path path = context.getPath();
+                                        if (path.getFileName().toString().startsWith(".")) {
+                                            final Path realPath = DotFileUtils.undot(path);
+                                            if (!eventRealPaths.contains(realPath)) {
+                                                path = realPath;
+                                            }
+                                        }
 
                                         if ( !path.getFileName().toString().startsWith( "." ) ) {
                                             //Default indexing
