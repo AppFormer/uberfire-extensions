@@ -271,9 +271,11 @@ public class IOServiceIndexedImpl extends IOServiceDotFileImpl {
                             final Set<Path> eventRealPaths = new HashSet<>();
                             for (WatchEvent event : events) {
                                 final WatchContext context = ((WatchContext) event.context());
-                                final Path path = context.getPath();
-                                if (!path.getFileName().toString().startsWith(".")) {
-                                    eventRealPaths.add(path);
+                                if (event.kind() == ENTRY_MODIFY || event.kind() == ENTRY_CREATE) {
+                                    final Path path = context.getPath();
+                                    if (!path.getFileName().toString().startsWith(".")) {
+                                        eventRealPaths.add(path);
+                                    }
                                 }
                             }
 
