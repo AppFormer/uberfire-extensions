@@ -135,6 +135,25 @@ public class ServletSecurityAuthenticationServiceTest {
 
     }
 
+    @Test
+    public void testSwallowIllegalStateExceptionDuringLogoutWithKeycloak() {
+        doThrow(new IllegalStateException("UT000021: Session already invalidated")).when(httpSession).invalidate();
+        tested.logout();
+    }
+
+    @Test
+    public void testReThrowUnexpectedIllegalStateExceptionDuringLogout() {
+        String exceptionMsg = "This exception should be propagated!";
+        doThrow(new IllegalStateException(exceptionMsg)).when(httpSession).invalidate();
+        try {
+            tested.logout();
+        } catch (IllegalStateException ise) {
+            // the exception message needs to be the same as defined above
+            assertEquals(exceptionMsg, ise.getMessage());
+        }
+    }
+
+
     private Set<Principal> mockPrincipals( String... names ) {
         Set<Principal> principals = new HashSet<Principal>();
         for ( String name : names ) {
