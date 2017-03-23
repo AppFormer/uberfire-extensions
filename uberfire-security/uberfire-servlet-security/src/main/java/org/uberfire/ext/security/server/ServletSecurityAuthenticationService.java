@@ -79,7 +79,19 @@ public class ServletSecurityAuthenticationService extends GroupAdapterAuthorizat
         }
         HttpSession session = request.getSession(false);
         if (session != null) {
-            session.invalidate();
+            // The try/catch is an ugly hack for EAP 7.0.x with Keycloak (or RH-SSO) adapter.
+            // Undertow (1.4.6-) will return what it appears to be a valid session (session != null), but in fact it
+            // was already invalidated by the Keycloak adapter during the request.logout() call.
+            // See https://issues.jboss.org/browse/RHBPMS-4574
+            try {
+                session.invalidate();
+            } catch (IllegalStateException ise) {
+                // Make sure we catch only the intended exception thrown by Undertow. Re-throw any other exception
+                String exceptionMessage = ise.getMessage();
+                if (exceptionMessage == null || !exceptionMessage.contains("UT000021")) {
+                    throw ise;
+                }
+            }
         }
     }
 
