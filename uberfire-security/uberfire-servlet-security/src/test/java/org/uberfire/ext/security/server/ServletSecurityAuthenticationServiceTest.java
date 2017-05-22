@@ -81,7 +81,7 @@ public class ServletSecurityAuthenticationServiceTest {
 
         RoleRegistry.get().registerRole( "admin" );
         RoleRegistry.get().registerRole( "role1" );
-        Set<Principal> principals = mockPrincipals( "admin", "role1", "group1" );
+        Set<Principal> principals = mockPrincipals( "admin", "role1", "group1", null ); // the null should be ignored
         Subject subject = new Subject();
         subject.getPrincipals().addAll( principals );
         doReturn( subject ).when( tested ).getSubjectFromPolicyContext();
