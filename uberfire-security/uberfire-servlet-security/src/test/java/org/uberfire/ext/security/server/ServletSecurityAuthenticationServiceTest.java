@@ -98,6 +98,21 @@ public class ServletSecurityAuthenticationServiceTest {
     }
 
     @Test
+    public void testLoginWithNoPrincipals() throws Exception {
+        Set<Principal> principals = new HashSet<>();
+        Subject subject = new Subject();
+        subject.getPrincipals().addAll( principals );
+        doReturn( subject ).when( tested ).getSubjectFromPolicyContext();
+
+        User user = tested.login( USERNAME, PASSWORD );
+
+        assertNotNull( user );
+        assertEquals( USERNAME, user.getIdentifier() );
+        assertEquals( 0, user.getRoles().size() );
+        assertEquals( 0, user.getGroups().size() );
+    }
+
+    @Test
     public void testLoginSubjectGroups() throws Exception {
         String username = "user1";
         String password = "password1";
