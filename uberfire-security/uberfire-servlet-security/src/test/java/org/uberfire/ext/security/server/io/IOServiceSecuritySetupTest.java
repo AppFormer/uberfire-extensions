@@ -54,6 +54,11 @@ public class IOServiceSecuritySetupTest {
                                                                                                User user ) throws UnauthorizedException {
                                                                          return true;
                                                                      }
+
+                                                                     @Override
+                                                                     public void invalidate(User user) {
+
+                                                                     }
                                                                  } );
 
         assertTrue( PriorityDisposableRegistry.getDisposables().contains( service ) );
@@ -85,6 +90,11 @@ public class IOServiceSecuritySetupTest {
                                                                      public boolean authorize( Resource resource,
                                                                                                User user ) throws UnauthorizedException {
                                                                          return false;
+                                                                     }
+
+                                                                     @Override
+                                                                     public void invalidate(User user) {
+
                                                                      }
                                                                  } );
 
