@@ -29,10 +29,16 @@ import org.uberfire.ext.security.management.search.IdentifierRuntimeSearchEngine
 import org.uberfire.ext.security.management.wildfly.properties.BaseWildflyGroupPropertiesManager;
 import org.uberfire.ext.security.management.wildfly.properties.WildflyPropertiesFileLoader;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <p>Groups manager service provider implementation for Wildfly, when using default realm based on properties files.</p>
@@ -57,10 +63,41 @@ public class Wildfly10GroupPropertiesManager extends BaseWildflyGroupPropertiesM
     protected WildflyPropertiesFileLoader getFileLoader(String filePath) {
         final File propertiesFile = new File(filePath);
         if (!propertiesFile.exists()) throw new RuntimeException("Cannot load roles/groups properties file from '" + filePath + "'.");
-
-        final PropertiesFileLoader propertiesFileLoader;
+        String path = null;
         try {
-            propertiesFileLoader = new PropertiesFileLoader(propertiesFile.getCanonicalPath(), null);
+            path = propertiesFile.getCanonicalPath();
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
+        final PropertiesFileLoader propertiesFileLoader = new PropertiesFileLoader(path, null) {
+            public final Pattern PROPERTY_PATTERN_NO_EMPTY_VALUE = Pattern.compile("#?+((?:[,.\\-@/a-zA-Z0-9]++|(?:\\\\[=\\\\])++)++)=(.*)");
+
+            @Override
+            public synchronized void persistProperties() throws IOException {
+                beginPersistence();
+                List<String> content = readFile(propertiesFile);
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(propertiesFile), Charset.forName("UTF-8")));
+                try {
+                    for (String line : content) {
+                        String trimmed = line.trim();
+                        if (trimmed.length() == 0) {
+                            bw.newLine();
+                        } else {
+                            Matcher matcher = PROPERTY_PATTERN_NO_EMPTY_VALUE.matcher(trimmed);
+                            if (!matcher.matches()) {
+                                write(bw, line, true);
+                            }
+                        }
+                    }
+                    endPersistence(bw);
+                } finally {
+                    safeClose(bw);
+                }
+            }
+        };
+        try {
             propertiesFileLoader.start(null);
         } catch (Exception e) {
             LOG.error("Error getting properties file.", e);
