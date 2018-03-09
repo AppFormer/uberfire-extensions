@@ -115,4 +115,5 @@ public interface CommonConstants
 
     String Select();
 
+    String Validating();
 }
