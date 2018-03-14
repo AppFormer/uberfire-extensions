@@ -19,6 +19,7 @@ package org.uberfire.ext.editor.commons.client;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.New;
@@ -51,8 +52,15 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.Menus;
 
-import static org.uberfire.ext.editor.commons.client.menu.MenuItems.*;
-import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.*;
+import static org.uberfire.ext.editor.commons.client.menu.MenuItems.COPY;
+import static org.uberfire.ext.editor.commons.client.menu.MenuItems.DELETE;
+import static org.uberfire.ext.editor.commons.client.menu.MenuItems.HISTORY;
+import static org.uberfire.ext.editor.commons.client.menu.MenuItems.RENAME;
+import static org.uberfire.ext.editor.commons.client.menu.MenuItems.SAVE;
+import static org.uberfire.ext.editor.commons.client.menu.MenuItems.VALIDATE;
+import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentDelete;
+import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentRename;
+import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
 
 public abstract class BaseEditor {
 
@@ -93,54 +101,54 @@ public abstract class BaseEditor {
     protected BaseEditor() {
     }
 
-    protected BaseEditor( final BaseEditorView baseView ) {
+    protected BaseEditor(final BaseEditorView baseView) {
         this.baseView = baseView;
     }
 
-    protected void init( final ObservablePath path,
-                         final PlaceRequest place,
-                         final ClientResourceType type,
-                         final MenuItems... menuItems ) {
-        init( path, place, type, true, false, menuItems );
+    protected void init(final ObservablePath path,
+                        final PlaceRequest place,
+                        final ClientResourceType type,
+                        final MenuItems... menuItems) {
+        init(path, place, type, true, false, menuItems);
     }
 
-    protected void init( final ObservablePath path,
-                         final PlaceRequest place,
-                         final ClientResourceType type,
-                         final boolean addFileChangeListeners,
-                         final boolean displayShowMoreVersions,
-                         final MenuItems... menuItems ) {
+    protected void init(final ObservablePath path,
+                        final PlaceRequest place,
+                        final ClientResourceType type,
+                        final boolean addFileChangeListeners,
+                        final boolean displayShowMoreVersions,
+                        final MenuItems... menuItems) {
         this.place = place;
         this.type = type;
-        this.menuItems.addAll( Arrays.asList( menuItems ) );
+        this.menuItems.addAll(Arrays.asList(menuItems));
         this.displayShowMoreVersions = displayShowMoreVersions;
 
         baseView.showLoading();
 
-        this.isReadOnly = this.place.getParameter( "readOnly", null ) == null ? false : true;
+        this.isReadOnly = this.place.getParameter("readOnly", null) == null ? false : true;
 
         versionRecordManager.init(
-                this.place.getParameter( "version", null ),
+                this.place.getParameter("version", null),
                 path,
                 new Callback<VersionRecord>() {
                     @Override
-                    public void callback( VersionRecord versionRecord ) {
-                        selectVersion( versionRecord );
+                    public void callback(VersionRecord versionRecord) {
+                        selectVersion(versionRecord);
                     }
-                } );
+                });
 
-        if ( displayShowMoreVersions ) {
+        if (displayShowMoreVersions) {
             versionRecordManager.setShowMoreCommand(
                     new Command() {
                         @Override
                         public void execute() {
                             showVersions();
                         }
-                    } );
+                    });
         }
 
-        if ( addFileChangeListeners ) {
-            addFileChangeListeners( path );
+        if (addFileChangeListeners) {
+            addFileChangeListeners(path);
         }
 
         makeMenuBar();
@@ -153,7 +161,7 @@ public abstract class BaseEditor {
     }
 
     private void buildMenuBar() {
-        if ( menuBuilder != null ) {
+        if (menuBuilder != null) {
             menus = menuBuilder.build();
         }
     }
@@ -166,33 +174,33 @@ public abstract class BaseEditor {
      * If you want to customize the menu override this method.
      */
     protected void makeMenuBar() {
-        if ( menuItems.contains( SAVE ) ) {
-            menuBuilder.addSave( new Command() {
+        if (menuItems.contains(SAVE)) {
+            menuBuilder.addSave(new Command() {
                 @Override
                 public void execute() {
                     onSave();
                 }
-            } );
+            });
         }
 
-        if ( menuItems.contains( COPY ) ) {
-            menuBuilder.addCopy( versionRecordManager.getCurrentPath(),
-                                 getCopyValidator(),
-                                 getCopyServiceCaller() );
+        if (menuItems.contains(COPY)) {
+            menuBuilder.addCopy(versionRecordManager.getCurrentPath(),
+                                getCopyValidator(),
+                                getCopyServiceCaller());
         }
-        if ( menuItems.contains( RENAME ) ) {
-            menuBuilder.addRename( versionRecordManager.getPathToLatest(),
-                                   getRenameValidator(),
-                                   getRenameServiceCaller() );
+        if (menuItems.contains(RENAME)) {
+            menuBuilder.addRename(versionRecordManager.getPathToLatest(),
+                                  getRenameValidator(),
+                                  getRenameServiceCaller());
         }
-        if ( menuItems.contains( DELETE ) ) {
-            menuBuilder.addDelete( versionRecordManager.getCurrentPath(), getDeleteServiceCaller() );
+        if (menuItems.contains(DELETE)) {
+            menuBuilder.addDelete(versionRecordManager.getCurrentPath(), getDeleteServiceCaller());
         }
-        if ( menuItems.contains( VALIDATE ) ) {
-            menuBuilder.addValidate( onValidate() );
+        if (menuItems.contains(VALIDATE)) {
+            menuBuilder.addValidate(getValidateCommand());
         }
-        if ( menuItems.contains( HISTORY ) ) {
-            menuBuilder.addNewTopLevelMenu( versionRecordManager.buildMenu() );
+        if (menuItems.contains(HISTORY)) {
+            menuBuilder.addNewTopLevelMenu(versionRecordManager.buildMenu());
         }
     }
 
@@ -204,93 +212,92 @@ public abstract class BaseEditor {
         return fileNameValidator;
     }
 
-    private void selectVersion( VersionRecord versionRecord ) {
-        baseView.showBusyIndicator( CommonConstants.INSTANCE.Loading() );
+    private void selectVersion(VersionRecord versionRecord) {
+        baseView.showBusyIndicator(CommonConstants.INSTANCE.Loading());
 
-        isReadOnly = !versionRecordManager.isLatest( versionRecord );
+        isReadOnly = !versionRecordManager.isLatest(versionRecord);
 
-        versionRecordManager.setVersion( versionRecord.id() );
+        versionRecordManager.setVersion(versionRecord.id());
 
         loadContent();
     }
 
-    public void setOriginalHash( Integer originalHash ) {
+    public void setOriginalHash(Integer originalHash) {
         this.originalHash = originalHash;
     }
 
-    private void addFileChangeListeners( final ObservablePath path ) {
-        path.onRename( new Command() {
+    private void addFileChangeListeners(final ObservablePath path) {
+        path.onRename(new Command() {
             @Override
             public void execute() {
                 onRename();
-
             }
-        } );
-        path.onDelete( new Command() {
+        });
+        path.onDelete(new Command() {
             @Override
             public void execute() {
                 onDelete();
             }
-        } );
+        });
 
-        path.onConcurrentUpdate( new ParameterizedCommand<ObservablePath.OnConcurrentUpdateEvent>() {
+        path.onConcurrentUpdate(new ParameterizedCommand<ObservablePath.OnConcurrentUpdateEvent>() {
             @Override
-            public void execute( final ObservablePath.OnConcurrentUpdateEvent eventInfo ) {
+            public void execute(final ObservablePath.OnConcurrentUpdateEvent eventInfo) {
                 concurrentUpdateSessionInfo = eventInfo;
             }
-        } );
+        });
 
-        path.onConcurrentRename( new ParameterizedCommand<ObservablePath.OnConcurrentRenameEvent>() {
+        path.onConcurrentRename(new ParameterizedCommand<ObservablePath.OnConcurrentRenameEvent>() {
             @Override
-            public void execute( final ObservablePath.OnConcurrentRenameEvent info ) {
-                newConcurrentRename( info.getSource(),
-                                     info.getTarget(),
-                                     info.getIdentity(),
-                                     new Command() {
-                                         @Override
-                                         public void execute() {
-                                             disableMenus();
-                                         }
-                                     },
-                                     new Command() {
-                                         @Override
-                                         public void execute() {
-                                             reload();
-                                         }
-                                     }
-                                   ).show();
+            public void execute(final ObservablePath.OnConcurrentRenameEvent info) {
+                newConcurrentRename(info.getSource(),
+                                    info.getTarget(),
+                                    info.getIdentity(),
+                                    new Command() {
+                                        @Override
+                                        public void execute() {
+                                            disableMenus();
+                                        }
+                                    },
+                                    new Command() {
+                                        @Override
+                                        public void execute() {
+                                            reload();
+                                        }
+                                    }
+                ).show();
             }
-        } );
+        });
 
-        path.onConcurrentDelete( new ParameterizedCommand<ObservablePath.OnConcurrentDelete>() {
+        path.onConcurrentDelete(new ParameterizedCommand<ObservablePath.OnConcurrentDelete>() {
             @Override
-            public void execute( final ObservablePath.OnConcurrentDelete info ) {
-                newConcurrentDelete( info.getPath(),
-                                     info.getIdentity(),
-                                     new Command() {
-                                         @Override
-                                         public void execute() {
-                                             disableMenus();
-                                         }
-                                     },
-                                     new Command() {
-                                         @Override
-                                         public void execute() {
-                                             placeManager.closePlace( place );
-                                         }
-                                     }
-                                   ).show();
+            public void execute(final ObservablePath.OnConcurrentDelete info) {
+                newConcurrentDelete(info.getPath(),
+                                    info.getIdentity(),
+                                    new Command() {
+                                        @Override
+                                        public void execute() {
+                                            disableMenus();
+                                        }
+                                    },
+                                    new Command() {
+                                        @Override
+                                        public void execute() {
+                                            placeManager.closePlace(place);
+                                        }
+                                    }
+                ).show();
             }
-        } );
+        });
     }
 
     private void onDelete() {
-        Scheduler.get().scheduleDeferred( new Scheduler.ScheduledCommand() {
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                placeManager.forceClosePlace( place );
+                placeManager.forceClosePlace(place);
             }
-        } );
+        });
     }
 
     /**
@@ -298,9 +305,9 @@ public abstract class BaseEditor {
      */
     protected void onRename() {
         refreshTitle();
-        baseView.showBusyIndicator( CommonConstants.INSTANCE.Loading() );
+        baseView.showBusyIndicator(CommonConstants.INSTANCE.Loading());
         loadContent();
-        changeTitleNotification.fire( new ChangeTitleWidgetEvent( place, getTitleText(), getTitle() ) );
+        changeTitleNotification.fire(new ChangeTitleWidgetEvent(place, getTitleText(), getTitle()));
     }
 
     /**
@@ -317,20 +324,20 @@ public abstract class BaseEditor {
     }
 
     private void refreshTitle() {
-        baseView.refreshTitle( getTitleText() );
+        baseView.refreshTitle(getTitleText());
     }
 
     protected void onSave() {
 
-        if ( isReadOnly && versionRecordManager.isCurrentLatest() ) {
+        if (isReadOnly && versionRecordManager.isCurrentLatest()) {
             baseView.alertReadOnly();
             return;
-        } else if ( isReadOnly && !versionRecordManager.isCurrentLatest() ) {
+        } else if (isReadOnly && !versionRecordManager.isCurrentLatest()) {
             versionRecordManager.restoreToCurrentVersion();
             return;
         }
 
-        if ( concurrentUpdateSessionInfo != null ) {
+        if (concurrentUpdateSessionInfo != null) {
             showConcurrentUpdatePopup();
         } else {
             save();
@@ -338,84 +345,111 @@ public abstract class BaseEditor {
     }
 
     protected void showConcurrentUpdatePopup() {
-        newConcurrentUpdate( concurrentUpdateSessionInfo.getPath(),
-                             concurrentUpdateSessionInfo.getIdentity(),
-                             new Command() {
-                                 @Override
-                                 public void execute() {
-                                     save();
-                                 }
-                             },
-                             new Command() {
-                                 @Override
-                                 public void execute() {
-                                     //cancel?
-                                 }
-                             },
-                             new Command() {
-                                 @Override
-                                 public void execute() {
-                                     reload();
-                                 }
-                             }
-                           ).show();
+        newConcurrentUpdate(concurrentUpdateSessionInfo.getPath(),
+                            concurrentUpdateSessionInfo.getIdentity(),
+                            new Command() {
+                                @Override
+                                public void execute() {
+                                    save();
+                                }
+                            },
+                            new Command() {
+                                @Override
+                                public void execute() {
+                                    //cancel?
+                                }
+                            },
+                            new Command() {
+                                @Override
+                                public void execute() {
+                                    reload();
+                                }
+                            }
+        ).show();
     }
 
-    protected RemoteCallback<Path> getSaveSuccessCallback( final int newHash ) {
+    protected RemoteCallback<Path> getSaveSuccessCallback(final int newHash) {
         return new RemoteCallback<Path>() {
             @Override
-            public void callback( final Path path ) {
+            public void callback(final Path path) {
                 baseView.hideBusyIndicator();
-                versionRecordManager.reloadVersions( path );
-                notification.fire( new NotificationEvent( CommonConstants.INSTANCE.ItemSavedSuccessfully() ) );
-                setOriginalHash( newHash );
+                versionRecordManager.reloadVersions(path);
+                notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemSavedSuccessfully()));
+                setOriginalHash(newHash);
             }
         };
     }
 
-    public void onRestore( @Observes RestoreEvent restore ) {
-        if ( versionRecordManager.getCurrentPath() == null || restore == null || restore.getPath() == null ) {
+    public void onRestore(@Observes RestoreEvent restore) {
+        if (versionRecordManager.getCurrentPath() == null || restore == null || restore.getPath() == null) {
             return;
         }
-        if ( versionRecordManager.getCurrentPath().equals( restore.getPath() ) ) {
+        if (versionRecordManager.getCurrentPath().equals(restore.getPath())) {
             //when a version is restored we don't want to add the concurrency listeners again -> false
-            init( versionRecordManager.getPathToLatest(), place, type, false, displayShowMoreVersions );
-            notification.fire( new NotificationEvent( CommonConstants.INSTANCE.ItemRestored() ) );
+            init(versionRecordManager.getPathToLatest(), place, type, false, displayShowMoreVersions);
+            notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemRestored()));
         }
     }
 
     public void reload() {
         concurrentUpdateSessionInfo = null;
         refreshTitle();
-        baseView.showBusyIndicator( CommonConstants.INSTANCE.Loading() );
+        baseView.showBusyIndicator(CommonConstants.INSTANCE.Loading());
         loadContent();
-        changeTitleNotification.fire( new ChangeTitleWidgetEvent( place, getTitleText(), getTitle() ) );
+        changeTitleNotification.fire(new ChangeTitleWidgetEvent(place, getTitleText(), getTitle()));
     }
 
     private void disableMenus() {
-        disableMenuItem( COPY );
-        disableMenuItem( MenuItems.RENAME );
-        disableMenuItem( MenuItems.DELETE );
-        disableMenuItem( MenuItems.VALIDATE );
+        disableMenuItem(COPY);
+        disableMenuItem(MenuItems.RENAME);
+        disableMenuItem(MenuItems.DELETE);
+        disableMenuItem(MenuItems.VALIDATE);
     }
 
-    private void disableMenuItem( final MenuItems menuItem ) {
-        if ( menus.getItemsMap().containsKey( menuItem ) ) {
-            menus.getItemsMap().get( menuItem ).setEnabled( false );
+    private void disableMenuItem(final MenuItems menuItem) {
+        if (menus.getItemsMap().containsKey(menuItem)) {
+            menus.getItemsMap().get(menuItem).setEnabled(false);
         }
+    }
+
+    protected boolean isValidationRunning = false;
+
+    protected Command getValidateCommand() {
+
+        return new Command() {
+            @Override
+            public void execute() {
+                if (!isValidationRunning) {
+
+                    onBeforeValidate();
+
+                    onValidate(new Command() {
+                        @Override
+                        public void execute() {
+                            onAfterValidate();
+                        }
+                    });
+                }
+            }
+        };
+    }
+
+    protected void onBeforeValidate() {
+        baseView.showBusyIndicator(CommonConstants.INSTANCE.Validating());
+        isValidationRunning = true;
+    }
+
+    protected void onAfterValidate() {
+        baseView.hideBusyIndicator();
+        isValidationRunning = false;
     }
 
     /**
      * If your editor has validation, overwrite this.
      * @return The validation command
      */
-    protected Command onValidate() {
-        return new Command() {
-            @Override
-            public void execute() {
-                // Default is that nothing happens.
-            }
-        };
+    protected void onValidate(final Command finished) {
+
     }
 
     protected abstract void loadContent();
@@ -439,19 +473,19 @@ public abstract class BaseEditor {
         return null;
     }
 
-    public boolean mayClose( Integer currentHash ) {
-        if ( isDirty( currentHash ) ) {
+    public boolean mayClose(Integer currentHash) {
+        if (isDirty(currentHash)) {
             return baseView.confirmClose();
         } else {
             return true;
         }
     }
 
-    public boolean isDirty( Integer currentHash ) {
-        if ( originalHash == null ) {
+    public boolean isDirty(Integer currentHash) {
+        if (originalHash == null) {
             return currentHash != null;
         } else {
-            return !originalHash.equals( currentHash );
+            return !originalHash.equals(currentHash);
         }
     }
 
