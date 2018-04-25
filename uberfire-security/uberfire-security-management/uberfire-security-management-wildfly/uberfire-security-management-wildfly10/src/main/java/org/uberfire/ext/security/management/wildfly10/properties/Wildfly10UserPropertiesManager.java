@@ -1,4 +1,4 @@
-/*
+/*b
  * Copyright 2016 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <p>Users manager service provider implementation for JBoss Wildfly, when using default realm based on properties files.</p>
@@ -57,13 +58,15 @@ public class Wildfly10UserPropertiesManager extends BaseWildflyUserPropertiesMan
         File usersFile = new File(usersFilePath);
         if (!usersFile.exists()) throw new RuntimeException("Properties file for users not found at '" + usersFilePath + "'.");
 
+
         final UserPropertiesFileLoader usersFileLoader = new UserPropertiesFileLoader(usersFile.getAbsolutePath(), null) {
+            public final Pattern PROPERTY_PATTERN_NO_EMPTY_VALUE = Pattern.compile("#?+((?:[,.\\-@/a-zA-Z0-9]++|(?:\\\\[=\\\\])++)++)=(.*)");
+
             // TODO Remove this when fixed in WF. Bug: Deleted properties are still persisted to properties file
             // as the line still present in the original property file is copied during persistProperties.
             @Override
             public synchronized void persistProperties() throws IOException {
                 beginPersistence();
-
                 List<String> content = readFile(propertiesFile);
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(propertiesFile), Charset.forName("UTF-8")));
                 try {
@@ -72,7 +75,7 @@ public class Wildfly10UserPropertiesManager extends BaseWildflyUserPropertiesMan
                         if (trimmed.length() == 0) {
                             bw.newLine();
                         } else {
-                            Matcher matcher = PROPERTY_PATTERN.matcher(trimmed);
+                            Matcher matcher = PROPERTY_PATTERN_NO_EMPTY_VALUE.matcher(trimmed);
                             if (!matcher.matches()) {
                                 write(bw, line, true);
                             }
