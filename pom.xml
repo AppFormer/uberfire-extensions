@@ -24,7 +24,7 @@
     <groupId>org.uberfire</groupId>
     <artifactId>uberfire-parent-metadata</artifactId>
     <!-- Keep in sync with property <version.org.uberfire> declared in uberfire-extensions-deps -->
-    <version>0.9.1-SNAPSHOT</version>
+    <version>0.9.1.Test</version>
   </parent>
 
   <artifactId>uberfire-extensions</artifactId>
