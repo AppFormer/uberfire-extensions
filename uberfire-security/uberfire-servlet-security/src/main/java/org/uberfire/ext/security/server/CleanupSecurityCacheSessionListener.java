@@ -28,15 +28,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.security.authz.AuthorizationManager;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * Releases locks on session end and clear authz related caches.
  */
 @WebListener
 public class CleanupSecurityCacheSessionListener implements HttpSessionListener {
 
-    private Instance<AuthorizationManager> authorizationManagers;
-
-    private static final Logger logger = LoggerFactory.getLogger(CleanupSecurityCacheSessionListener.class);
+    private final Collection<AuthorizationManager> authorizationManagers = new ArrayList<AuthorizationManager>();
 
     public CleanupSecurityCacheSessionListener() {
         //empty needed for weld
@@ -44,7 +45,9 @@ public class CleanupSecurityCacheSessionListener implements HttpSessionListener 
 
     @Inject
     public CleanupSecurityCacheSessionListener(final Instance<AuthorizationManager> authorizationManagers) {
-        this.authorizationManagers = authorizationManagers;
+        for (AuthorizationManager authorizationManager : authorizationManagers) {
+            this.authorizationManagers.add(authorizationManager);
+        }
     }
 
     @Override
@@ -53,6 +56,9 @@ public class CleanupSecurityCacheSessionListener implements HttpSessionListener 
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
+        if (authorizationManagers.isEmpty()) {
+            return;
+        }
         final User currentUser = (User) se.getSession().getAttribute(ServletSecurityAuthenticationService.USER_SESSION_ATTR_NAME);
         if (currentUser != null && !currentUser.equals(User.ANONYMOUS)) {
             for (AuthorizationManager authorizationManager : authorizationManagers) {

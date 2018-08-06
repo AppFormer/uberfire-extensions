@@ -67,4 +67,16 @@ public class CleanupSecurityCacheSessionListenerTest {
         verify(authorizationManager1, times(1)).invalidate(user);
         verify(authorizationManager2, times(1)).invalidate(user);
     }
+
+    @Test
+    public void testSessionCleanupNPE() {
+        final CleanupSecurityCacheSessionListener listener = new CleanupSecurityCacheSessionListener();
+
+        final User user = new UserImpl("user", ImmutableSet.of(new RoleImpl("author")));
+
+        when(evt.getSession()).thenReturn(session);
+        when(session.getAttribute(ServletSecurityAuthenticationService.USER_SESSION_ATTR_NAME)).thenReturn(user);
+
+        listener.sessionDestroyed(evt);
+    }
 }
